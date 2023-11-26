@@ -1,21 +1,19 @@
-import { readJSON } from '../utils.js'
+import { readJSON } from '../../utils.js'
 import { randomUUID } from 'node:crypto'
-import { validateRestaurant, validatePartialRestaurant } from '../Schemas/restaurant-schemas.js'
 
-const restaurantsInformation = readJSON('../example.json')
+const restaurantsInformation = readJSON('./models/local-file-sys/local-storage/restaurants.json')
+
+const users = readJSON('./models/local-file-sys/local-storage/users.json')
 
 const findRestaurant = ({ id }) => {
     const restaurant = restaurantsInformation.find(rest => rest.id == id)
-    
-    if (restaurant == undefined){
-        return {error: "NO SE ENCONTRO"}
-    }
 
     return restaurant
     
 }
 
 export class AppModel {
+
     static async getAllRestaurants(){
         return restaurantsInformation
     }
@@ -28,13 +26,16 @@ export class AppModel {
     static getMenu({ id }){
         const restaurant = findRestaurant({ id })
         
+        if(restaurant == undefined) return restaurant
 
         return restaurant.menu
     }
 
-    static modifyMenu({ id, result }){
+    static updateMenu({ id, result }){
 
         const restaurantIndex = restaurantsInformation.findIndex(res => res.id == id)
+
+        if( restaurantIndex < 0) return false
 
         const updatedMenu = {
             ...restaurantsInformation[restaurantIndex].menu,
@@ -43,7 +44,7 @@ export class AppModel {
 
         restaurantsInformation[restaurantIndex].menu = updatedMenu
 
-        return restaurantsInformation[restaurantIndex]
+        return true
     }
 
     static createRestaurant(object){
@@ -56,5 +57,27 @@ export class AppModel {
         restaurantsInformation.push(newRestaurant)
 
         return newRestaurant
+    }
+
+    static getOpenRestaurants(){
+        const openRestaurants = restaurantsInformation.filter(rest =>{
+            return rest.open == true
+        })
+
+        return openRestaurants
+    }
+
+    static setOpen({ id }){
+        const restaurant = findRestaurant({ id })
+        
+        console.log(restaurant.open)
+        restaurant.open = restaurant.open ? false : true
+
+        return restaurant.open
+
+    }
+
+    static getAllUsers(){
+        return users
     }
 }

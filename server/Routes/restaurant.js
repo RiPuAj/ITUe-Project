@@ -1,56 +1,32 @@
 import { Router } from 'express'
-import { AppModel } from '../models/local-file-sys.js'
-import { validatePartialRestaurant, validateRestaurant } from '../Schemas/restaurant-schemas.js'
-import { randomUUID } from 'node:crypto'
-import { object } from 'zod'
+import { RestaurantController } from '../Controllers/restaurant.js'
 
 // restaurantsRouter for /restaurants
 export const restaurantsRouter = Router()
 
-restaurantsRouter.get('/', async (req, res) => {
-    const restaurants =  await AppModel.getAllRestaurants()
-    res.json(restaurants)
-})
+restaurantsRouter.get('/', RestaurantController.getAll)
 
-restaurantsRouter.post('/', async (req, res) => {
-    const result = validateRestaurant(req.body)
+restaurantsRouter.post('/', RestaurantController.createRestaurant)
 
-    if(!result.success) {
-        return res.status(400).json({error: JSON.parse(result.error.message)})
-    }
-    const restaurant = await AppModel.createRestaurant(result)
-    
-    res.status(201).json(restaurant)
-})
+restaurantsRouter.get('/open', RestaurantController.getOpenRestaurants)
 
-restaurantsRouter.get('/:id', async (req, res) => {
-    const { id } = req.params
-    const restaurant = await AppModel.getRestaurant({id})
-    res.json(restaurant)
-})
+restaurantsRouter.patch('/open/:id',
+RestaurantController.setOpen)
 
-restaurantsRouter.get('/:id/menu', async (req, res) => {
-    const { id } = req.params
-    const menu = await AppModel.getMenu({id})
-    res.json(menu)
-})
+restaurantsRouter.get('/:id', RestaurantController.getRestaurant)
 
-restaurantsRouter.patch('/:id/menu', async (req, res) => {
-    const { id } = req.params
+restaurantsRouter.get('/:id/menu', RestaurantController.getMenu)
 
-    const result = validatePartialRestaurant(req.body)
+restaurantsRouter.patch('/:id/menu', RestaurantController.updateMenu)
 
-    if(!result.success) {
-        return res.status(400).json({error: JSON.parse(result.error.message)})
-    }
-
-    const response = await AppModel.modifyMenu({ id, result })
-   
-    res.status(201).json(response)
-})
+restaurantsRouter.get('/:id-restaurant/orders', )
 
 restaurantsRouter.post('/:id/new-order', (req, res) => {
     const { id } = req.params
 
+
+})
+
+restaurantsRouter.delete('/:id-restaurant/orders/:id-order', (req, res) => {
 
 })

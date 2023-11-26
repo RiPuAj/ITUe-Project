@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "name": "Juan Pérez",
+        "address": "Calle Principal 123",
+        "phone": "123-456-7890"
+    },
+    {
+        "id": 2,
+        "name": "María González",
+        "address": "Avenida Central 456",
+        "phone": "987-654-3210"
+    },
+    {
+        "id": 3,
+        "name": "Luis García",
+        "address": "Plaza Mayor 789",
+        "phone": "555-123-4567"
+    }
+]

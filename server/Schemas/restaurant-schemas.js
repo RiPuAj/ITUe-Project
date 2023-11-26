@@ -9,8 +9,9 @@ const restaurantSchema = z.object({
         invalid_type_error: 'Address of the local must be string',
         required_error: 'Address of the local is required'
     
-    }),
-    menu: z.record(z.string().min(2), z.number().positive())
+    }).min(5),
+    menu: z.record(z.string().min(2), z.number().positive()),
+    open: z.boolean().default(false)
 })
 
 export function validateRestaurant(object){

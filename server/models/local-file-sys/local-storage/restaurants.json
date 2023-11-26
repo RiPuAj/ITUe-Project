@@ -7,7 +7,8 @@
           "hamburguesa": 5.99,
           "pizza": 8.49,
           "ensalada": 6.99
-        }
+        },
+        "open": false
       },
       {
     
@@ -18,7 +19,8 @@
           "cafe": 12,
           "pizza": 8.49,
           "ensalada": 6.99
-        }
+        },
+        "open": false
       },
       {
         "id": 3,
@@ -28,7 +30,8 @@
           "tacos": 7.99,
           "burritos": 9.49,
           "guacamole": 4.99
-        }
+        },
+        "open": true
       },
       {
         "id": 4,
@@ -38,7 +41,8 @@
           "sushi": 10.99,
           "ramen": 8.99,
           "tempura": 7.49
-        }
+        },
+        "open": true
       }
     ]
 

@@ -2,6 +2,7 @@ import express from 'express'
 import { createServer } from 'node:http'
 import { Server } from 'socket.io'
 import { restaurantsRouter } from './Routes/restaurant.js'
+import { userRouter } from './Routes/user.js'
 import { corsMiddlewares } from './Middlewares/cors.js'
 
 // Default port
@@ -13,6 +14,7 @@ app.use(express.json())
 app.use(corsMiddlewares())
 app.disable('x-powered-by')
 app.use('/restaurants', restaurantsRouter)
+app.use('/users', userRouter)
 const server = createServer(app)
 const io = new Server(server)
 
