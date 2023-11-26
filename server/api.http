@@ -1,0 +1,44 @@
+GET http://localhost:3000/restaurants
+
+###
+GET http://localhost:3000/restaurants/3
+
+###
+GET http://localhost:3000/restaurants/3/menu
+
+###
+POST http://localhost:3000/restaurants
+Content-Type: application/json
+
+{
+    "name": "El coro de Pablo",
+    "address": "Calle de pablitu",
+    "menu": {
+        "pizza": 8.49,
+        "ensalada": 123
+    }
+}
+
+###
+POST http://localhost:3000/restaurants
+Content-Type: application/json
+
+{
+    "name": "ssa",
+    "address": "Calle de pablitu",
+    "menu": {
+        "pizza": 8.49,
+        "ensalada": 123
+    }
+}
+
+###
+PATCH http://localhost:3000/restaurants/2/menu
+Content-Type: application/json
+
+{
+    "menu" : {
+        "pizza2" : 3,
+        "otra": 4
+    }
+}

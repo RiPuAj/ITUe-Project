@@ -1,0 +1,44 @@
+[{
+    
+        "id": 1,
+        "name": "Delicias Express",
+        "address": "Calle Principal #123",
+        "menu": {
+          "hamburguesa": 5.99,
+          "pizza": 8.49,
+          "ensalada": 6.99
+        }
+      },
+      {
+    
+        "id": 2,
+        "name": "Starbucks Coffe",
+        "address": "Calle Principal #123",
+        "menu": {
+          "cafe": 12,
+          "pizza": 8.49,
+          "ensalada": 6.99
+        }
+      },
+      {
+        "id": 3,
+        "name": "Taco Loco",
+        "address": "Avenida Mexicana #50",
+        "menu": {
+          "tacos": 7.99,
+          "burritos": 9.49,
+          "guacamole": 4.99
+        }
+      },
+      {
+        "id": 4,
+        "name": "Sushi House",
+        "address": "Calle Japonesa #30",
+        "menu": {
+          "sushi": 10.99,
+          "ramen": 8.99,
+          "tempura": 7.49
+        }
+      }
+    ]
+
