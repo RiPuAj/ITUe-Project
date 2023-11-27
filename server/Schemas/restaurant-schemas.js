@@ -10,7 +10,13 @@ const restaurantSchema = z.object({
         required_error: 'Address of the local is required'
     
     }).min(5),
-    menu: z.record(z.string().min(2), z.number().positive()),
+    menu: z.object(
+        z.string({
+            invalid_type_error: 'Name of the local must be a string',
+            required_error: 'Name of the local is required'
+        }).min(3),
+        z.number().positive().min(0.01)
+    ),
     open: z.boolean().default(false)
 })
 

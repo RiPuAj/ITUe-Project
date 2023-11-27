@@ -80,4 +80,10 @@ export class AppModel {
     static getAllUsers(){
         return users
     }
+
+    static getUser({ id }){
+        const user = users.find(user => user.id == id)
+
+        return user
+    }
 }

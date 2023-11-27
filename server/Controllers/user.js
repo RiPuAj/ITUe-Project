@@ -9,6 +9,11 @@ export class UserController{
     }
 
     static async getUser(req, res){
-        
+        const { id } = req.params
+        const user = await AppModel.getUser({ id })
+
+        if(user == undefined) res.status(400).json({error: 'User Not Found'})
+
+        res.status(201).json(user)
     }
 }

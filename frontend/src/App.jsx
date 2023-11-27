@@ -49,7 +49,7 @@ function App() {
 
   const handleClick = (e) => {
     const id = document.getElementById('id-client').target.value
-    console.log(e.target.value)
+    setId(id)
     //setId()
   }
 
@@ -59,7 +59,7 @@ function App() {
       
 
 
-      <Link to={`/restaurant/${id}`} onClick={handleClick}>PULSA AQUI GILIPOLLAS</Link>
+      <Link to={`#`} onClick={handleClick}>PULSADOR</Link>
     </div>
   )
 }

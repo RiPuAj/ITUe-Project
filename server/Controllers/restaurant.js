@@ -65,7 +65,7 @@ export class RestaurantController{
             return res.status(400).json({error: JSON.parse(result.error.message)})
         }
 
-        const response = await AppModel.updateMenuMenu({ id, result })
+        const response = await AppModel.updateMenu({ id, result })
 
         if(!response) return res.status(400).json({error: 'Restaurant not found'})
     

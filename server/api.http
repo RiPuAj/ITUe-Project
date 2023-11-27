@@ -1,10 +1,10 @@
 GET http://localhost:3000/restaurants
 
 ###
-GET http://localhost:3000/restaurants/45
+GET http://localhost:3000/restaurants/2
 
 ###
-GET http://localhost:3000/restaurants/3/menu
+GET http://localhost:3000/restaurants/4/menu
 
 ###
 POST http://localhost:3000/restaurants
@@ -33,6 +33,7 @@ Content-Type: application/json
 }
 
 ###
+// Update menu of one restaurants
 PATCH http://localhost:3000/restaurants/2/menu
 Content-Type: application/json
 
@@ -41,14 +42,20 @@ Content-Type: application/json
         "pizza2" : 3,
         "otra": 4
     }
+
 }
 
 ###
+// Get all restaurants open
 GET http://localhost:3000/restaurants/open
 
 
 ### 
+// Set 
 PATCH http://localhost:3000/restaurants/open/2
 
 ###
 GET http://localhost:3000/users
+
+###
+GET http://localhost:3000/users/2
