@@ -43,10 +43,10 @@ io.on('connection', socket => {
         RestaurantController.getConnectedRestaurants().then(data => console.log("Opened ->", data, "\n\n"))
     }*/
 
-    socket.on('get restaurant', () => {
-        const {id, typeClient } = socket.handshake.query
+    socket.on('get restaurant', ({query}) => {
+        const { id } = query
         RestaurantController.addConnectedRestaurant({idRest: id, idSocket: socket.id})
-        RestaurantController.getRestaurant({ id }).then(data => {io.emit('get restaurant', {restaurant: data})})
+        RestaurantController.getRestaurant({ id }).then(data => {io.emit('get restaurant', {restaurant:data})})
         // Manejar errores (todo)
     })
 
@@ -68,9 +68,9 @@ io.on('connection', socket => {
         UserController.getAllRestaurants().then(data => io.emit('get all restaurants', data))
     })
 
-    socket.on('get client', () =>{
-        const {id, typeClient } = socket.handshake.query
-        UserController.getUser({ id }).then(data=>{io.emit('get client',{data})})
+    socket.on('get client',  ({query}) =>{
+        const { id } = query
+        UserController.getUser({ id }).then(data=>{io.emit('get client',{client:data})})
     })
     
     socket.on('get menu restaurant', ({ id }) => {

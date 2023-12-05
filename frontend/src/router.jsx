@@ -6,6 +6,7 @@ import { MenuView } from './pages/MenuView.jsx'
 import { ClientProvider } from './hooks/contexts.jsx'
 
 import { createBrowserRouter } from 'react-router-dom'
+import { EditMenu } from './Components/EditMenu.jsx'
 export const router = createBrowserRouter([
     {
       // App index
@@ -31,5 +32,9 @@ export const router = createBrowserRouter([
       // Log in as restaurant
       path: "/restaurant/:id",
       element: <RestaurantView/>
+    },
+    {
+      path:"/restaurant/:id/edit_menu/",
+      element: <EditMenu/>
     },
   ])

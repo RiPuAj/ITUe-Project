@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link ,useParams } from "react-router-dom";
 import { io } from "socket.io-client";
+import { ClientContext } from "../hooks/contexts";
 
 /*const useSocket = ({ id }) =>{
   // Connect Client to Server
@@ -22,15 +23,29 @@ const RestaurantView = () => {
 
   //const [isConnected, setIsConnected] = useState(socket.connected)
   const [restaurant, setRestaurant] = useState()
-  const [socket, setSocket] = useState(null)
   const [orders, setOrders] = useState([])
   const [editMenu, setEditMenu] = useState(false)
   const [menu, setMenu] = useState()
 
   // Take params from URL
   const { id } = useParams()
+  const socket = useContext(ClientContext)
 
-  const connectSocket = ({ id }) => {
+  useEffect(() => {
+    if (socket){
+      socket.on('get restaurant', (restaurant) => {
+        setRestaurant(restaurant.restaurant)
+      })
+
+      socket.on('new order', (newOrder) => {
+        setOrders([...orders, newOrder])
+      })
+
+      socket.emit('get restaurant', {query:{id:id}})
+    }
+  }, [socket])
+
+  /*const connectSocket = ({ id }) => {
 
     // Connect Client to Server
     const newSocket = io('http://localhost:3000', {
@@ -63,7 +78,7 @@ const RestaurantView = () => {
     if (!socket) {
       connectSocket({ id })
     }
-  }, [])
+  }, [])*/
 
   const handleClickMenu = () => {
 
@@ -98,42 +113,16 @@ const RestaurantView = () => {
         restaurant && (
           <nav>
             <h1>{restaurant.name}</h1>
-            <button onClick={handleClickMenu}>
+            <button>
               {
-                editMenu ? 'Close Edit Menu' : 'Open Edit Menu'
+                <Link to={`/restaurant/${id}/edit_menu`}>Edit Menu</Link>
               }
             </button>
           </nav>
         )
       }
       <div>
-        {
-
-          editMenu ?
-            (
-              <div>
-                <ul>
-                  {
-                    menu && menu.map((dish, index) => {
-                      return (<li key={index}>
-                        <input name="food" type="text" value={dish.food} onChange={(e) => handleOnChange(e, index)} />
-                        <input name="price" type="number" value={dish.price} onChange={(e) => handleOnChange(e, index)} />
-                        <button>Delete</button>
-                      </li>)
-                    })
-                  }
-                  <button>Add New Dish</button>
-                  <button onClick={handleSave}>Save Menu</button>
-                </ul>
-              </div>
-            )
-            : (<div>
-              <h1>OPEN</h1>
-              <h2>ORDERS</h2>
-            </div>
-            )
-
-        }
+        <h1>Edit</h1>
       </div>
     </div>
   );
