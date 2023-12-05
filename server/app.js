@@ -1,8 +1,6 @@
 import express from 'express'
 import { createServer } from 'node:http'
 import { Server } from 'socket.io'
-import { restaurantsRouter } from './Routes/restaurant.js'
-import { userRouter } from './Routes/user.js'
 import { corsMiddlewares } from './Middlewares/cors.js'
 import { RestaurantController } from './Controllers/restaurant.js'
 import { UserController } from './Controllers/user.js'
@@ -15,8 +13,6 @@ const app = express()
 app.use(express.json())
 app.use(corsMiddlewares())
 app.disable('x-powered-by')
-//app.use('/restaurants', restaurantsRouter)
-//app.use('/users', userRouter)
 
 const server = createServer(app)
 const io = new Server(server, {
@@ -75,14 +71,7 @@ io.on('connection', socket => {
     
     socket.on('get menu restaurant', ({ id }) => {
         UserController.getRestaurant({ id }).then(data => io.emit('get menu restaurant', data))
-    })
-    /*
-    socket.on('set open', () =>{
-        RestaurantController.setOpenState({ idRest: id })
-        .then(data => io.emit('send openState', {open : data}))
-    })*/
-
-    
+    })    
 
     })
 
