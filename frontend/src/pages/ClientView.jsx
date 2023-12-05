@@ -1,13 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ClientContext } from "../hooks/contexts.jsx";
+import '../styles/clientView.css'
 
 export const ClientView = () => {
 
     const [restaurants, setRestaurants] = useState([])
     const [user, setUser] = useState()
     const [currentPage, setCurrentPage] = useState(1);
-    const restaurantsPerPage = 5;
+    const restaurantsPerPage = 15;
     const indexOfLastRestaurant = currentPage * restaurantsPerPage;
     const indexOfFirstRestaurant = indexOfLastRestaurant - restaurantsPerPage;
     const currentRestaurants = restaurants.slice(indexOfFirstRestaurant, indexOfLastRestaurant);
@@ -16,9 +17,9 @@ export const ClientView = () => {
     const socket = useContext(ClientContext)
 
     useEffect(() => {
-        if(socket){
+        if (socket) {
 
-            socket.on('get client',(client) => {
+            socket.on('get client', (client) => {
                 setUser(client)
             })
 
@@ -27,9 +28,9 @@ export const ClientView = () => {
             })
 
             socket.emit('get all restaurants')
-            socket.emit('get client',{
-                query:{
-                    id:id
+            socket.emit('get client', {
+                query: {
+                    id: id
                 }
             })
         }
@@ -37,28 +38,48 @@ export const ClientView = () => {
 
     const totalPages = Math.ceil(restaurants.length / restaurantsPerPage);
 
-const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    /*return (
+        <div>
+            {user && <p>Welcome {user.name}</p>}
+            <ul>
+                {currentRestaurants.map((rest) => (
+                    <li key={rest.id} data-id={rest.id}>
+                        <Link to={`/user/${id}/restaurant/${rest.id}`}>{rest.name}-----{rest.rating}</Link>
+                    </li>
+                ))}
+            </ul>
+            <div>
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <button key={index + 1} onClick={() => handlePageChange(index + 1)}>
+                        {index + 1}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );*/
+    return (
+        <div>
+            {user && <p>Welcome {user.name}</p>}
+            <div className="restaurant-cards-container">
+                {currentRestaurants.map((rest) => (
+                    <Link to={`/user/${id}/restaurant/${rest.id}`} className="restaurant-card" key={rest.id}>
+                        <h2 className="restaurant-name">{rest.name}</h2>
+                        <p className="restaurant-rating">Rating: {rest.rating}</p>
+                    </Link>
+                ))}
+            </div>
+            <div className="pagination">
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <button key={index + 1} onClick={() => handlePageChange(index + 1)}>
+                        {index + 1}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
 };
 
-return (
-    <div>
-        {user && <p>Welcome {user.name}</p>}
-        <ul>
-            {currentRestaurants.map((rest) => (
-                <li key={rest.id} data-id={rest.id}>
-                    <Link to={`/user/${id}/restaurant/${rest.id}`}>{rest.name}</Link>
-                </li>
-            ))}
-        </ul>
-        <div>
-            {Array.from({ length: totalPages }, (_, index) => (
-                <button key={index + 1} onClick={() => handlePageChange(index + 1)}>
-                    {index + 1}
-                </button>
-            ))}
-        </div>
-    </div>
-);
-  };
-  
