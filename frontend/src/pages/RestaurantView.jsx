@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Link ,useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { ClientContext } from "../hooks/contexts";
 
@@ -32,7 +32,7 @@ const RestaurantView = () => {
   const socket = useContext(ClientContext)
 
   useEffect(() => {
-    if (socket){
+    if (socket) {
       socket.on('get restaurant', (restaurant) => {
         setRestaurant(restaurant.restaurant)
       })
@@ -41,7 +41,9 @@ const RestaurantView = () => {
         setOrders([...orders, newOrder])
       })
 
-      socket.emit('get restaurant', {query:{id:id}})
+      socket.emit('get restaurant', {
+        query: { id: id }
+      })
     }
   }, [socket])
 

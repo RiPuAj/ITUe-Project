@@ -1,12 +1,11 @@
 import App from './App.jsx'
 import RestaurantView from './pages/RestaurantView.jsx'
-import ClientView from './pages/ClientView.jsx'
+import { ClientView } from './pages/ClientView.jsx'
 import CourierView from './pages/CourierView.jsx'
 import { MenuView } from './pages/MenuView.jsx'
-import { ClientProvider } from './hooks/contexts.jsx'
-
 import { createBrowserRouter } from 'react-router-dom'
 import { EditMenu } from './Components/EditMenu.jsx'
+
 export const router = createBrowserRouter([
     {
       // App index

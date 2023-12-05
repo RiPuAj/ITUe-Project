@@ -70,7 +70,7 @@ io.on('connection', socket => {
 
     socket.on('get client',  ({query}) =>{
         const { id } = query
-        UserController.getUser({ id }).then(data=>{io.emit('get client',{client:data})})
+        UserController.getUser({ id }).then(data=>{io.emit('get client', data)})
     })
     
     socket.on('get menu restaurant', ({ id }) => {
