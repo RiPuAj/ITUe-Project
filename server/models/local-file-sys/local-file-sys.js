@@ -1,21 +1,32 @@
 import { readJSON } from '../../utils.js'
 import { randomUUID } from 'node:crypto'
 
-const restaurantsInformation = readJSON('./models/local-file-sys/local-storage/restaurants.json')
+const restaurantsInformation = readJSON('./models/local-file-sys/local-storage/MOCK_DATA.json')
 
 const users = readJSON('./models/local-file-sys/local-storage/users.json')
 
 const findRestaurant = ({ id }) => {
     const restaurant = restaurantsInformation.find(rest => rest.id == id)
-
     return restaurant
     
 }
 
+var connectedRestaurants = []
+
 export class AppModel {
 
-    static async getAllRestaurants(){
-        return restaurantsInformation
+    static getAllRestaurants(){
+        const basicInfo = restaurantsInformation.map(rest => {
+            return(
+                {
+                    id: rest.id,
+                    name: rest.name,
+                    rating: rest.rating
+                }
+            )
+        })
+
+        return basicInfo
     }
 
     static getRestaurant({ id }){
@@ -31,7 +42,7 @@ export class AppModel {
         return restaurant.menu
     }
 
-    static updateMenu({ id, result }){
+    static updateMenu({ id, newMenu }){
 
         const restaurantIndex = restaurantsInformation.findIndex(res => res.id == id)
 
@@ -39,7 +50,7 @@ export class AppModel {
 
         const updatedMenu = {
             ...restaurantsInformation[restaurantIndex].menu,
-            ...result.data.menu
+            ...newMenu
         }
 
         restaurantsInformation[restaurantIndex].menu = updatedMenu
@@ -59,23 +70,16 @@ export class AppModel {
         return newRestaurant
     }
 
-    static getOpenRestaurants(){
-        const openRestaurants = restaurantsInformation.filter(rest =>{
-            return rest.open == true
-        })
+    /*static setOpen({ idRest }){
 
-        return openRestaurants
-    }
-
-    static setOpen({ id }){
-        const restaurant = findRestaurant({ id })
+        const restaurant = findRestaurant({ id: idRest })
         
-        console.log(restaurant.open)
+        
         restaurant.open = restaurant.open ? false : true
 
         return restaurant.open
 
-    }
+    }*/
 
     static getAllUsers(){
         return users
@@ -85,5 +89,45 @@ export class AppModel {
         const user = users.find(user => user.id == id)
 
         return user
+    }
+
+    static addConnectedRestaurant({idRest, idSocket}){
+        const restaurant = {
+            id_restaurant: idRest,
+            id_socket: idSocket
+        }
+
+        const existConnected = connectedRestaurants.map((rest) => {
+            return rest.id_restaurant == idRest
+        })
+
+        if(!existConnected.includes(true)){
+            connectedRestaurants.push(restaurant)
+            return true
+        }
+
+        return false
+    }
+
+    static removeConnectedRestaurant({ idRest }){
+        const restIndex = connectedRestaurants.findIndex(info => info.id_restaurant == idRest)
+
+        if (restIndex < 0) return false
+
+        connectedRestaurants.splice(restIndex, 1)
+
+        return true
+    }
+
+    static getConnectedRestaurants(){
+        return connectedRestaurants
+    }
+
+    static getSocketId({ idRest }){
+        const socketId = connectedRestaurants.filter(infoSocket => {
+            if(infoSocket.id_restaurant == idRest) return infoSocket.id_socket
+        })
+
+        return false
     }
 }

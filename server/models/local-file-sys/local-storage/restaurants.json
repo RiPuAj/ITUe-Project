@@ -16,8 +16,7 @@
         "food": "guacamole",
         "price": 4.99
       }
-    ],
-    "open": true
+    ]
   },
   {
     "id": 2,
@@ -36,8 +35,7 @@
         "food": "soda",
         "price": 1.99
       }
-    ],
-    "open": true
+    ]
   },
   {
     "id": 3,
@@ -56,8 +54,7 @@
         "food": "garlic knots",
         "price": 4.99
       }
-    ],
-    "open": false
+    ]
   },
   {
     "id": 4,
@@ -76,8 +73,7 @@
         "food": "miso soup",
         "price": 3.99
       }
-    ],
-    "open": true
+    ]
   }
 ]
 

@@ -1,46 +1,21 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+export const MenuRestaurant = () => {
 
-const RESTAURANT_ENDPOINT = 'http://localhost:3000/restaurants'
+    return (
+        <div>
+            <button onClick={() => setClickedRestaurant(false)}>ATRAS</button>
+            <h1>{restaurant.name}</h1>
+            <ul>
+                {
+                    restaurant.menu.map((dish, index) => {
+                        return (<li key={index}>
+                            {dish.food}
+                            <input type="number" />
+                            <button>ADD TO CART</button>
+                        </li>)
+                    })
+                }
+            </ul>
+        </div>
+    )
 
-export const MenuView = () => {
-
-  const [restaurant, setRestaurant] = useState()
-
-  const { id_restaurant } = useParams()
-
-  const getRestaurant = async () =>{
-    await fetch(`${RESTAURANT_ENDPOINT}/${id_restaurant}`, {
-      method: 'GET'
-    }).then(res => res.json())
-    .then(data => setRestaurant(data))
-  }
-
-  useEffect(() =>{
-    console.log(id_restaurant)
-    getRestaurant()
-
-  }, [])
-
-  const handleClick = (index) => {
-    console.log(restaurant.menu[index])
-  }
-
-  return (
-    <div>
-      <ul>
-        {
-          restaurant && ((restaurant.menu).map((dish, index) => {
-            return(
-              <li key={index}>
-                <h1>{dish.food}</h1>
-                <h2>{dish.price}</h2>
-                <button onClick={()=> handleClick(index)}>Pulsa</button>
-              </li>
-            )
-          }))
-        }
-      </ul>
-    </div>
-  );
-};
+}

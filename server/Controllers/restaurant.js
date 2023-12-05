@@ -4,10 +4,10 @@ import { validatePartialRestaurant, validateRestaurant } from '../Schemas/restau
 
 export class RestaurantController{
 
-    static async getAll(req, res){
+    static async getAll(){
         const restaurants = await AppModel.getAllRestaurants()
 
-        return res.json(restaurants)
+        return restaurants
     }
 
     static async createRestaurant(req, res) {
@@ -21,7 +21,8 @@ export class RestaurantController{
         res.status(201).json(restaurant)
     }
 
-    static async getRestaurant(req, res) {
+    /*static async getRestaurant(req, res) {
+        
         // Hacer la validacion de la id
         const { id } = req.params
         const restaurant = await AppModel.getRestaurant({id})
@@ -29,15 +30,22 @@ export class RestaurantController{
         if(restaurant==undefined) res.status(400).json({error: 'Restaurant Not Found'})
 
         return res.status(201).json(restaurant)
+    }*/
+
+    static async getRestaurant({ id }){
+        
+        const restaurant = await AppModel.getRestaurant({ id })
+
+        return restaurant
     }
 
-    static async getOpenRestaurants(req, res){
-        const openRestaurants = await AppModel.getOpenRestaurants()
+    static async getConnectedRestaurants(){
+        const connectedRestaurants = await AppModel.getConnectedRestaurants()
 
-        return res.json(openRestaurants)
+        return connectedRestaurants
     }
 
-    static async setOpen(req, res){
+    /*static async setOpen(req, res){
         const { id } = req.params
 
         const response = await AppModel.setOpen({ id })
@@ -45,15 +53,14 @@ export class RestaurantController{
         const message = response ? 'Restaurant is open' : 'Restaurant is closed'
 
         return res.status(201).json({state: message})
-    }
+    }*/
 
-    static async getMenu(req, res){
-        const { id } = req.params
-        const menu = await AppModel.getMenu({id})
+    static async getMenu({ id, newMenu }){
+        const menu = await AppModel.getMenu({ id, newMenu })
 
-        if (menu == undefined) res.status(400).json({error: 'Restaurant Not Found'})
+        if (menu == undefined) return false
 
-        return res.json(menu)
+        return true
     }
 
     static async updateMenu(req, res){
@@ -70,5 +77,26 @@ export class RestaurantController{
         if(!response) return res.status(400).json({error: 'Restaurant not found'})
     
         return res.status(201).json('Restaurant menu updated')
+    }
+
+    static async addConnectedRestaurant({idRest, idSocket}){
+        const res = await AppModel.addConnectedRestaurant({idRest, idSocket})
+
+        return res
+    }
+
+    static async removeConnectedRestaurant({ idRest }){
+        const resRemove = await AppModel.removeConnectedRestaurant({ idRest })
+        return resRemove
+    }
+
+    static async setOpenState({ idRest }){
+  
+        return AppModel.setOpen({ idRest })
+    }
+
+    static async getSocketId({ idRest }){
+        const res = await AppModel.getSocketId({ idRest })
+        return res
     }
 }

@@ -1,65 +1,37 @@
 import './App.css'
-import { io } from 'socket.io-client'
-import { Link } from 'react-router-dom'
-import { useState } from 'react'
-
-const URL = 'http://localhost:3000'
-
-/*
-const handleClick = (e) => {
-
-  let buttonId = e.target.id
-  let clientId = document.getElementById('id-client').value
-  
-  window.location.href = `${window.location.href}/restaurant/${clientId}`
-
-  /*
-  if (buttonId == 'log-client'){
-    console.log("Log Client")
-    const socket = io(URL, {
-      query: {
-        typeClient : "client",
-        token: "2"
-      }
-    })
-  } else if (buttonId == 'log-restaurant'){
-    
-    console.log("Log Restaurant")
-    const socket = io(URL, {
-      query: {
-        typeClient : "restaurant",
-        token: {clientId}
-      }
-    })
-  } else if (buttonId == 'log-deliver'){
-    
-    console.log("Log Deliver")
-    const socket = io(URL, {
-      query: {
-        typeClient : "deliver",
-        token: {clientId}
-      }
-    })
-  }
-
-}*/
 
 function App() {
-  const [id, setId] = useState()
 
   const handleClick = (e) => {
-    const id = document.getElementById('id-client').target.value
-    setId(id)
-    //setId()
+    e.preventDefault()
+    const id = document.getElementById('id-client').value
+    const idBtn = e.target.id
+    const location = window.location.href
+    
+    if(id == ''){
+      return
+
+    } else if(idBtn == 'clientBtn'){
+
+      window.location.href = `${location}user/${id}`
+
+    } else if(idBtn == 'restaurantBtn'){
+
+      window.location.href = `${location}restaurant/${id}`
+    
+    } else {
+     
+      window.location.href = `${location}courier/${id}`
+    
+    }
   }
 
   return (
     <div>
-      <input type="text" id="id-client" value = {id} placeholder='ID'/>
-      
-
-
-      <Link to={`#`} onClick={handleClick}>PULSADOR</Link>
+      <input type="number" id="id-client" placeholder='ID'/>
+      <button id="clientBtn" onClick={handleClick}>Client</button>
+      <button id="restaurantBtn" onClick={handleClick}>Restaurant</button>
+      <button id="courierBtn" onClick={handleClick}>Courier</button>
     </div>
   )
 }

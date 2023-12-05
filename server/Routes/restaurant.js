@@ -8,10 +8,9 @@ restaurantsRouter.get('/', RestaurantController.getAll)
 
 restaurantsRouter.post('/', RestaurantController.createRestaurant)
 
-restaurantsRouter.get('/open', RestaurantController.getOpenRestaurants)
+//restaurantsRouter.get('/open', RestaurantController.getOpenRestaurants)
 
-restaurantsRouter.patch('/open/:id',
-RestaurantController.setOpen)
+// restaurantsRouter.patch('/open/:id',RestaurantController.setOpen)
 
 restaurantsRouter.get('/:id', RestaurantController.getRestaurant)
 
