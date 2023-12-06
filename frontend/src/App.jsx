@@ -1,39 +1,37 @@
 import './App.css'
+import { Link } from 'react-router-dom'
+import { useState } from 'react';
+import Container from 'react-bootstrap/esm/Container';
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/esm/Button';
 
 function App() {
 
-  const handleClick = (e) => {
-    e.preventDefault()
-    const id = document.getElementById('id-client').value
-    const idBtn = e.target.id
-    const location = window.location.href
-    
-    if(id == ''){
-      return
 
-    } else if(idBtn == 'clientBtn'){
+  const [id, setId] = useState('');
 
-      window.location.href = `${location}user/${id}`
-
-    } else if(idBtn == 'restaurantBtn'){
-
-      window.location.href = `${location}restaurant/${id}`
-    
-    } else {
-     
-      window.location.href = `${location}courier/${id}`
-    
-    }
-  }
+  const handleInputChange = (e) => {
+    setId(e.target.value);
+  };
 
   return (
-    <div>
-      <input type="number" id="id-client" placeholder='ID'/>
-      <button id="clientBtn" onClick={handleClick}>Client</button>
-      <button id="restaurantBtn" onClick={handleClick}>Restaurant</button>
-      <button id="courierBtn" onClick={handleClick}>Courier</button>
-    </div>
-  )
+    <Container className="d-flex flex-column align-items-center mt-5">
+      <Form.Control
+        type="number"
+        placeholder="Enter ID"
+        value={id}
+        onChange={handleInputChange}
+        min="1"
+
+      />
+      <div className="d-flex flex-row justify-content-between mt-3 gap-3">
+        <Link to={id ? `/user/${id}` : '/'}><Button className="mb-2">User</Button></Link>
+        <Link to={id ? `/restaurant/${id}` : '/'}><Button className="mb-2">Restaurant</Button></Link>
+        <Link to={id ? `/courier/${id}` : '/'}><Button className="mb-2">Courier</Button></Link>
+        <Link to="/admin"><Button className="mb-2">Admin</Button></Link>
+      </div>
+    </Container>
+  );
 }
 
 export default App

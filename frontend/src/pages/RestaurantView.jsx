@@ -1,23 +1,8 @@
 import { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { io } from "socket.io-client";
+import { useParams } from "react-router-dom";
 import { ClientContext } from "../hooks/contexts";
+import { NavBarRestaurant } from "../Components/NavBarRestaurant.jsx";
 
-/*const useSocket = ({ id }) =>{
-  // Connect Client to Server
-  const [socket, setSocket] = useState(null)
-
-  const newSocket = io('http://localhost:3000', {
-    query: {
-      typeClient: 'restaurant',
-      id: id
-    }
-    
-    return(
-      socket
-    )
-  })
-}*/
 
 const RestaurantView = () => {
 
@@ -46,41 +31,6 @@ const RestaurantView = () => {
       })
     }
   }, [socket])
-
-  /*const connectSocket = ({ id }) => {
-
-    // Connect Client to Server
-    const newSocket = io('http://localhost:3000', {
-      query: {
-        typeClient: 'restaurant',
-        id: id
-      }
-
-    })
-
-    newSocket.on('get restaurant', async (rest) => {
-      setRestaurant(rest.restaurant)
-      setMenu(JSON.parse(JSON.stringify(rest.restaurant.menu)))
-      console.log(rest.restaurant.menu)
-    })
-
-    newSocket.on('new order', (order) => {
-      setOrders([...orders, order])
-    })
-
-    newSocket.emit('get restaurant')
-
-    setSocket(newSocket)
-  }
-
-
-  useEffect(() => {
-
-    // Connect with the server
-    if (!socket) {
-      connectSocket({ id })
-    }
-  }, [])*/
 
   const handleClickMenu = () => {
 
@@ -113,22 +63,21 @@ const RestaurantView = () => {
     <div>
       {
         restaurant && (
-          <nav>
-            <h1>{restaurant.name}</h1>
-            <button>
-              {
-                <Link to={`/restaurant/${id}/edit_menu`}>Edit Menu</Link>
-              }
-            </button>
-          </nav>
+          <NavBarRestaurant name={restaurant.name} link={`/restaurant/${id}/edit_menu`} text_btn="EDIT MENU"/>
         )
       }
       <div>
-        <h1>Edit</h1>
+        <h1>ORDERS</h1>
+        {/*orders.map((order)=>(
+           <Link to={`/restaurant/${id}/order/${order.id}`} key={order.id}>
+                <h2 className="order-id">{order.id}</h2>
+            </Link>
+        ))
+
+        */}
       </div>
     </div>
   );
-};
-
+}
 export default RestaurantView;
 

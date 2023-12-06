@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ClientContext } from "../hooks/contexts.jsx";
-import '../styles/clientView.css'
+import Table from "react-bootstrap/esm/Table.js";
 
 export const ClientView = () => {
 
     const [restaurants, setRestaurants] = useState([])
     const [user, setUser] = useState()
     const [currentPage, setCurrentPage] = useState(1);
-    const restaurantsPerPage = 15;
+    const restaurantsPerPage = 7;
     const indexOfLastRestaurant = currentPage * restaurantsPerPage;
     const indexOfFirstRestaurant = indexOfLastRestaurant - restaurantsPerPage;
     const currentRestaurants = restaurants.slice(indexOfFirstRestaurant, indexOfLastRestaurant);

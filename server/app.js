@@ -73,7 +73,16 @@ io.on('connection', socket => {
         UserController.getRestaurant({ id }).then(data => io.emit('get menu restaurant', data))
     })    
 
+    socket.on('edit menu', async ({ id, newMenu }) => {
+        const updated = await RestaurantController.updateMenu({ id, newMenu})
+        if(updated){
+            RestaurantController.getRestaurant({ id }).then(data =>
+                io.emit('update menu', {restaurant:data}
+            ))
+        }
     })
+    
+})
 
 server.listen(PORT, () => {
     console.log(`Sever running in ${PORT}`)

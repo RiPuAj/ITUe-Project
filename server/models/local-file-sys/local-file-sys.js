@@ -48,12 +48,8 @@ export class AppModel {
 
         if( restaurantIndex < 0) return false
 
-        const updatedMenu = {
-            ...restaurantsInformation[restaurantIndex].menu,
-            ...newMenu
-        }
 
-        restaurantsInformation[restaurantIndex].menu = updatedMenu
+        restaurantsInformation[restaurantIndex].menu = newMenu
 
         return true
     }
@@ -69,17 +65,6 @@ export class AppModel {
 
         return newRestaurant
     }
-
-    /*static setOpen({ idRest }){
-
-        const restaurant = findRestaurant({ id: idRest })
-        
-        
-        restaurant.open = restaurant.open ? false : true
-
-        return restaurant.open
-
-    }*/
 
     static getAllUsers(){
         return users

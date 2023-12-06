@@ -5,8 +5,13 @@ import CourierView from './pages/CourierView.jsx'
 import { MenuView } from './pages/MenuView.jsx'
 import { createBrowserRouter } from 'react-router-dom'
 import { EditMenu } from './Components/EditMenu.jsx'
+import { AdministratorView } from './pages/AdministratorView.jsx'
 
 export const router = createBrowserRouter([
+    {
+      path:"/admin",
+      element: <AdministratorView />
+    },
     {
       // App index
       path: "/",

@@ -63,20 +63,11 @@ export class RestaurantController{
         return true
     }
 
-    static async updateMenu(req, res){
-        const { id } = req.params
+    static async updateMenu({ id, newMenu}){
 
-        const result = validatePartialRestaurant(req.body)
-
-        if(!result.success) {
-            return res.status(400).json({error: JSON.parse(result.error.message)})
-        }
-
-        const response = await AppModel.updateMenu({ id, result })
-
-        if(!response) return res.status(400).json({error: 'Restaurant not found'})
+        const response = await AppModel.updateMenu({ id, newMenu })
     
-        return res.status(201).json('Restaurant menu updated')
+        return true
     }
 
     static async addConnectedRestaurant({idRest, idSocket}){
