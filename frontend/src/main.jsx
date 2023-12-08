@@ -3,7 +3,7 @@ import { RouterProvider } from 'react-router-dom'
 import { ClientProvider } from './hooks/contexts.jsx'
 import { router } from './router.jsx'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles/index.css'
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <ClientProvider>

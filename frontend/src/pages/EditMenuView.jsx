@@ -1,20 +1,18 @@
 import { useContext, useEffect, useState } from "react"
 import { ClientContext } from "../hooks/contexts"
 import { useParams } from "react-router-dom"
-import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Container from "react-bootstrap/esm/Container";
-import { FaPencilAlt } from "react-icons/fa";
-import { FaRegTrashAlt } from "react-icons/fa";
 import Navbar from 'react-bootstrap/Navbar'
+import { TableEditMenu } from "../Components/TableEditMenu";
 
 
 
 
 
-export const EditMenu = () => {
+export const EditMenuView = () => {
     // Estado para el menú de comida
     const [restaurant, setRestaurant] = useState(null)
     const [menu, setMenu] = useState([])
@@ -77,6 +75,8 @@ export const EditMenu = () => {
             newMenu: menu
         })
 
+        setEditFood('')
+        setEditPrice('')
         setShowEditModal(false);
     };
 
@@ -119,7 +119,17 @@ export const EditMenu = () => {
     const handleAddItem = () => {
         // Lógica para agregar un nuevo plato
         // ...
+        const newDish = {
+            food: newFood,
+            price: newPrice
+        }
+        setMenu([...menu, newDish])
 
+        socket.emit('edit menu', {
+            id: id,
+            newMenu: menu
+        })
+        
         setShowAddModal(false);
     };
 
@@ -136,32 +146,12 @@ export const EditMenu = () => {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-
-            <Table striped bordered hover >
-                <thead>
-                    <tr>
-                        <th className="text-center">Food</th>
-                        <th className="text-center">Price</th>
-                        <th className="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {menu && menu.map((item, index) => (
-                        <tr key={index}>
-                            <td className="text-center" title={`Food: ${item.food}`}>{item.food}</td>
-                            <td className="text-center" title={`Price: ${item.price}`}>{item.price}</td>
-                            <td className="text-center">
-                                <Button variant="success" onClick={() => handleEditModal(index, item.food, item.price)} title="Edit Button">
-                                    <FaPencilAlt />
-                                </Button>{' '}
-                                <Button variant="danger" onClick={() => handleDeleteModal(index)} title="Delete Button">
-                                    <FaRegTrashAlt />
-                                </Button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+            
+            <div className="d-flex justify-content-end m-2">
+                <Button onClick={handleAddModal}>ADD</Button>
+            </div>
+            
+            <TableEditMenu menu={menu} handleDeleteModal={handleDeleteModal} handleEditModal={handleEditModal} />
 
             {/* Ventana modal para editar */}
             <Modal show={showEditModal} onHide={handleCloseEditModal}>
@@ -176,7 +166,7 @@ export const EditMenu = () => {
                         </Form.Group>
                         <Form.Group controlId="formPrice">
                             <Form.Label>Price</Form.Label>
-                            <Form.Control type="number" placeholder="Enter price" value={editPrice} onChange={(e) => setEditPrice(parseFloat(e.target.value))} />
+                            <Form.Control type="number" placeholder="Enter price" value={editPrice} onChange={(e) => setEditPrice(parseFloat(e.target.value))} min={0.01}/>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -215,11 +205,11 @@ export const EditMenu = () => {
                     <Form>
                         <Form.Group controlId="formNewFood">
                             <Form.Label>Food</Form.Label>
-                            <Form.Control type="text" placeholder="Enter food" value={newFood} onChange={(e) => setNewFood(e.target.value)} />
+                            <Form.Control type="text" placeholder="Enter food" onChange={(e) => setNewFood(e.target.value)} />
                         </Form.Group>
                         <Form.Group controlId="formNewPrice">
                             <Form.Label>Price</Form.Label>
-                            <Form.Control type="number" placeholder="Enter price" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} />
+                            <Form.Control type="number" placeholder="Enter price" onChange={(e) => setNewPrice(e.target.value)} min={0.01}/>
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -236,4 +226,3 @@ export const EditMenu = () => {
         </div>
     );
 };
-

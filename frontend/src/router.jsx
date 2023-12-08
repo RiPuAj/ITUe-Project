@@ -4,8 +4,12 @@ import { ClientView } from './pages/ClientView.jsx'
 import CourierView from './pages/CourierView.jsx'
 import { MenuView } from './pages/MenuView.jsx'
 import { createBrowserRouter } from 'react-router-dom'
-import { EditMenu } from './Components/EditMenu.jsx'
-import { AdministratorView } from './pages/AdministratorView.jsx'
+import { EditMenuView } from './pages/EditMenuView.jsx'
+import { AdministratorView } from './pages/Admin/AdministratorView.jsx'
+import { ClientAdministratorView } from './pages/Admin/ClientAdministratorView.jsx'
+import { RestaurantsAdministratorView } from './pages/Admin/RestaurantsAdministrator.jsx'
+import { CourierAdministratorView } from './pages/Admin/CourierAdministrator.jsx'
+
 
 export const router = createBrowserRouter([
     {
@@ -13,7 +17,18 @@ export const router = createBrowserRouter([
       element: <AdministratorView />
     },
     {
-      // App index
+      path:"/admin/Users",
+      element: <ClientAdministratorView />
+    },{
+      path:"/admin/Restaurants",
+      element: <RestaurantsAdministratorView />
+    },
+    {
+      path:"/admin/Couriers",
+      element: <CourierAdministratorView />
+    },
+    {
+      //App index
       path: "/",
       element: <App/>
     },
@@ -39,6 +54,6 @@ export const router = createBrowserRouter([
     },
     {
       path:"/restaurant/:id/edit_menu/",
-      element: <EditMenu/>
+      element: <EditMenuView/>
     },
   ])

@@ -4,6 +4,7 @@ import { Server } from 'socket.io'
 import { corsMiddlewares } from './Middlewares/cors.js'
 import { RestaurantController } from './Controllers/restaurant.js'
 import { UserController } from './Controllers/user.js'
+import { AdminController } from './Controllers/admin.js'
 
 // Default port
 const PORT = process.env.PORT ?? 3000
@@ -24,30 +25,40 @@ const io = new Server(server, {
 
 // Connection method
 io.on('connection', socket => {
-    //const { id, typeClient} = socket.handshake.query
 
-    /*if(typeClient == 'restaurant'){
-        // Hay que crear para que envie informacion del servidor, enviar restaurante
+    socket.on('connected', ({query}) => {
+        const {id, typeClient} = query
 
-        // Add restaurant when it connects
-        RestaurantController.addConnectedRestaurant({idRest :id, idSocket: socket.id})
+        if(typeClient == 'restaurant'){
+            RestaurantController.addConnectedRestaurant({idRest:id, idSocket:socket.id}).then(data => {
+                if(data){
+                    AdminController.getActiveRestaurants().then(
+                        rests => io.emit('get active restaurants', rests)
+                    )
+                }
+            })
 
-        // Send Restaurant data to client
-        RestaurantController.getRestaurant({ id }).then(data => io.emit('get restaurant', {restaurant: data}))
 
-        // See All Restaurants Connected
-        RestaurantController.getConnectedRestaurants().then(data => console.log("Opened ->", data, "\n\n"))
-    }*/
+        }
+
+        else if(typeClient == 'user'){
+            return
+        }
+
+        else{
+            return
+        }
+    })
 
     socket.on('get restaurant', ({query}) => {
         const { id } = query
-        RestaurantController.addConnectedRestaurant({idRest: id, idSocket: socket.id})
         RestaurantController.getRestaurant({ id }).then(data => {io.emit('get restaurant', {restaurant:data})})
         // Manejar errores (todo)
     })
 
     socket.on('disconnect', () => {
         const {id, typeClient} = socket.handshake.query
+        console.log(id, typeClient)
         if(typeClient == 'restaurant'){
             RestaurantController.removeConnectedRestaurant({idRest: id})
         }
@@ -76,10 +87,22 @@ io.on('connection', socket => {
     socket.on('edit menu', async ({ id, newMenu }) => {
         const updated = await RestaurantController.updateMenu({ id, newMenu})
         if(updated){
-            RestaurantController.getRestaurant({ id }).then(data =>
+            RestaurantController.getRestaurant({ id }).then(data => 
                 io.emit('update menu', {restaurant:data}
             ))
         }
+    })
+
+    socket.on('get active users', () => {
+        AdminController.getActiveUsers().then(data => io.emit('get active users', data))
+    })
+
+    socket.on('get active restaurants', () => {
+        AdminController.getActiveRestaurants().then(data => io.emit('get active restaurants', data))
+    })
+
+    socket.on('get active couriers', () => {
+        AdminController.getActiveCouriers().then(data => io.emit('get active couriers', data))
     })
     
 })

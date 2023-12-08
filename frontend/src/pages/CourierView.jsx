@@ -24,7 +24,7 @@ const CourierView = () => {
   const acceptOrder = (order) => {
     setSelectedOrder(order);
     setDeliveryStatus('accepted');
-    // Lógica para notificar al restaurante y actualizar el estado del pedido
+    // Lógica para notificar al restaurante y actualizar el estado del pedido 
     // También podrías emitir un evento al cliente para informarle sobre el estado de su pedido
   };
 

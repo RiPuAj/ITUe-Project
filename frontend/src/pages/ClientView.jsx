@@ -1,7 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ClientContext } from "../hooks/contexts.jsx";
-import Table from "react-bootstrap/esm/Table.js";
+import Card from 'react-bootstrap/Card';
+import ListGroup from 'react-bootstrap/ListGroup';
+import Button from 'react-bootstrap/Button';
 
 export const ClientView = () => {
 
@@ -42,41 +44,31 @@ export const ClientView = () => {
         setCurrentPage(pageNumber);
     };
 
-    /*return (
-        <div>
-            {user && <p>Welcome {user.name}</p>}
-            <ul>
-                {currentRestaurants.map((rest) => (
-                    <li key={rest.id} data-id={rest.id}>
-                        <Link to={`/user/${id}/restaurant/${rest.id}`}>{rest.name}-----{rest.rating}</Link>
-                    </li>
-                ))}
-            </ul>
-            <div>
-                {Array.from({ length: totalPages }, (_, index) => (
-                    <button key={index + 1} onClick={() => handlePageChange(index + 1)}>
-                        {index + 1}
-                    </button>
-                ))}
-            </div>
-        </div>
-    );*/
     return (
         <div>
             {user && <p>Welcome {user.name}</p>}
-            <div className="restaurant-cards-container">
-                {currentRestaurants.map((rest) => (
-                    <Link to={`/user/${id}/restaurant/${rest.id}`} className="restaurant-card" key={rest.id}>
-                        <h2 className="restaurant-name">{rest.name}</h2>
-                        <p className="restaurant-rating">Rating: {rest.rating}</p>
-                    </Link>
+            <div className="col">
+                {currentRestaurants.map((rest, index) => (
+                    <div key={index} className="col-lg-4 mb-3">
+                        <Link to={`/user/${id}/restaurant/${rest.id}`} className="custom-link">
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title>{rest.name}</Card.Title>
+                                </Card.Body>
+                                <ListGroup className="list-group-flush">
+                                    <ListGroup.Item>Rating: {rest.rating}</ListGroup.Item>
+                                </ListGroup>
+                            </Card>
+                        </Link>
+                    </div>
                 ))}
             </div>
+
             <div className="pagination">
                 {Array.from({ length: totalPages }, (_, index) => (
-                    <button key={index + 1} onClick={() => handlePageChange(index + 1)}>
+                    <Button variant="primary" key={index + 1} onClick={() => handlePageChange(index + 1)}>
                         {index + 1}
-                    </button>
+                    </Button>
                 ))}
             </div>
         </div>

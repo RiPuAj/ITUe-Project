@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ClientContext } from "../hooks/contexts";
 import { NavBarRestaurant } from "../Components/NavBarRestaurant.jsx";
+import Modal from 'react-bootstrap/Modal';
+import Button from "react-bootstrap/esm/Button.js";
 
 
 const RestaurantView = () => {
@@ -9,8 +11,6 @@ const RestaurantView = () => {
   //const [isConnected, setIsConnected] = useState(socket.connected)
   const [restaurant, setRestaurant] = useState()
   const [orders, setOrders] = useState([])
-  const [editMenu, setEditMenu] = useState(false)
-  const [menu, setMenu] = useState()
 
   // Take params from URL
   const { id } = useParams()
@@ -18,6 +18,7 @@ const RestaurantView = () => {
 
   useEffect(() => {
     if (socket) {
+      socket.options.query = {id:id}
       socket.on('get restaurant', (restaurant) => {
         setRestaurant(restaurant.restaurant)
       })
@@ -26,55 +27,50 @@ const RestaurantView = () => {
         setOrders([...orders, newOrder])
       })
 
+      socket.emit('connected', {
+        query:{
+          id: id,
+          typeClient: 'restaurant'
+        }
+      })
+
       socket.emit('get restaurant', {
         query: { id: id }
       })
     }
   }, [socket])
 
-  const handleClickMenu = () => {
-
-    // Menu not saved
-    if (!(JSON.stringify(restaurant.menu) == JSON.stringify(menu))) {
-      setMenu(JSON.parse(JSON.stringify(restaurant.menu)))
-    }
-    console.log(menu)
-
-    setEditMenu(editMenu ? false : true)
-  }
-
-  const handleOnChange = (e, index) => {
-    const { name, value } = e.target
-    const updatedMenu = [...menu]
-    updatedMenu[index][name] = value
-    setMenu(updatedMenu)
-  }
-
-  const handleSave = () => {
-    if (!(JSON.stringify(restaurant.menu) == JSON.stringify(menu))) {
-      const updatedRestaurant = JSON.parse(JSON.stringify(restaurant))
-      updatedRestaurant.menu = menu
-      console.log([...menu, ...menu])
-      //socket.emit('update menu', )
-    }
-  }
 
   return (
     <div>
       {
         restaurant && (
-          <NavBarRestaurant name={restaurant.name} link={`/restaurant/${id}/edit_menu`} text_btn="EDIT MENU"/>
+          <NavBarRestaurant name={restaurant.name} link={`/restaurant/${id}/edit_menu`} text_btn="EDIT MENU" />
         )
       }
       <div>
         <h1>ORDERS</h1>
-        {/*orders.map((order)=>(
-           <Link to={`/restaurant/${id}/order/${order.id}`} key={order.id}>
-                <h2 className="order-id">{order.id}</h2>
-            </Link>
-        ))
+        {orders.length < 1 ?
 
-        */}
+          <div className="d-flex justify-content-center">
+            <h1>No orders already</h1>
+          </div>
+
+          : <h1>SI order</h1>}
+
+        {/*<Modal show={show} onHide={onHide}>
+          <Modal.Header closeButton>
+            <Modal.Title>Nueva Orden</Modal.Title>
+          </Modal.Header>
+          <Modal.Footer>
+            <Button variant="danger" onClick={handleReject}>
+              Reject
+            </Button>
+            <Button variant="" onClick={handleAccept}>
+              Accept
+            </Button>
+          </Modal.Footer>
+        </Modal>*/}
       </div>
     </div>
   );

@@ -2,8 +2,10 @@ import { readJSON } from '../../utils.js'
 import { randomUUID } from 'node:crypto'
 
 const restaurantsInformation = readJSON('./models/local-file-sys/local-storage/MOCK_DATA.json')
-
 const users = readJSON('./models/local-file-sys/local-storage/users.json')
+var connectedCouriers = []
+var connectedRestaurants = []
+var connectedUsers = []
 
 const findRestaurant = ({ id }) => {
     const restaurant = restaurantsInformation.find(rest => rest.id == id)
@@ -11,7 +13,7 @@ const findRestaurant = ({ id }) => {
     
 }
 
-var connectedRestaurants = []
+
 
 export class AppModel {
 
@@ -104,15 +106,24 @@ export class AppModel {
         return true
     }
 
-    static getConnectedRestaurants(){
-        return connectedRestaurants
-    }
-
     static getSocketId({ idRest }){
         const socketId = connectedRestaurants.filter(infoSocket => {
             if(infoSocket.id_restaurant == idRest) return infoSocket.id_socket
         })
 
         return false
+    }
+
+    static getActiveCouriers(){
+        return connectedCouriers
+    }
+
+    static getActiveRestaurants(){
+        console.log(connectedRestaurants)
+        return connectedRestaurants
+    }
+
+    static getActiveUsers(){
+        return connectedUsers
     }
 }

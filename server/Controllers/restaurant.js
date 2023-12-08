@@ -33,7 +33,7 @@ export class RestaurantController{
     }*/
 
     static async getRestaurant({ id }){
-        
+        const result = validatePartialRestaurant(id)
         const restaurant = await AppModel.getRestaurant({ id })
 
         return restaurant
@@ -44,16 +44,6 @@ export class RestaurantController{
 
         return connectedRestaurants
     }
-
-    /*static async setOpen(req, res){
-        const { id } = req.params
-
-        const response = await AppModel.setOpen({ id })
-
-        const message = response ? 'Restaurant is open' : 'Restaurant is closed'
-
-        return res.status(201).json({state: message})
-    }*/
 
     static async getMenu({ id, newMenu }){
         const menu = await AppModel.getMenu({ id, newMenu })
