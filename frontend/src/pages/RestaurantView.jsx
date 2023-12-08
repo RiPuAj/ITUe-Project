@@ -18,7 +18,7 @@ const RestaurantView = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.options.query = {id:id}
+
       socket.on('get restaurant', (restaurant) => {
         setRestaurant(restaurant.restaurant)
       })
@@ -38,6 +38,8 @@ const RestaurantView = () => {
         query: { id: id }
       })
     }
+
+    return() => socket.disconnect()
   }, [socket])
 
 
