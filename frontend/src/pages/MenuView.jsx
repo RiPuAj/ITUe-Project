@@ -10,6 +10,7 @@ import Table from 'react-bootstrap/Table';
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import ListGroup from 'react-bootstrap/ListGroup';
+import Alert from "react-bootstrap/Alert"
 
 export const MenuView = () => {
 
@@ -20,6 +21,8 @@ export const MenuView = () => {
     const [itemToBasket, setItemToBasket] = useState(null)
     const [total, setTotal] = useState(0)
     const [user, setUser] = useState()
+    const [mensaje, setMensaje] = useState()
+    const [showModal, setShowModal] = useState(false)
 
     useEffect(() => {
         if (socket) {
@@ -41,6 +44,11 @@ export const MenuView = () => {
                 query: {
                     id: id
                 }
+            })
+
+            socket.on('error order', (mensaje) => {
+                setMensaje(mensaje)
+                setShowModal(true)
             })
         }
 
@@ -107,9 +115,21 @@ export const MenuView = () => {
                             </Navbar>
 
                         </>
+                        <Alert show={showModal} variant="danger">
+                            <Alert.Heading>Error while performing order</Alert.Heading>
+                            <p>
+                               {mensaje}
+                            </p>
+                            <hr />
+                            <div className="d-flex justify-content-end">
+                                <Button onClick={() => setShowModal(false)} variant="danger">
+                                    Close
+                                </Button>
+                            </div>
+                        </Alert>
                         <Row style={{ height: '100vh' }}>
 
-                            <Col xs={9} style={{height:'100%', borderRight: 'solid 2px'}}>
+                            <Col xs={9} style={{ height: '100%', borderRight: 'solid 2px' }}>
                                 <Table striped bordered hover variant="clear">
                                     {<><thead>
                                         <tr>

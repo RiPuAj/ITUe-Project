@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { response } from 'express'
 import { createServer } from 'node:http'
 import { Server } from 'socket.io'
 import { corsMiddlewares } from './Middlewares/cors.js'
@@ -6,6 +6,7 @@ import { RestaurantController } from './Controllers/restaurant.js'
 import { UserController } from './Controllers/user.js'
 import { AdminController } from './Controllers/admin.js'
 import { CourierController } from './Controllers/courier.js'
+import { randomUUID } from 'node:crypto'
 
 // Default port
 const PORT = process.env.PORT ?? 3000
@@ -134,16 +135,23 @@ io.on('connection', socket => {
 
     socket.on('add order', async ({ query }) => {
         const  {id_restaurant, id_user, order } =  query
-        const user = await UserController.getUser({ id:id_user })
-        const restaurant = await RestaurantController.getRestaurant({ id: id_restaurant})
-        const restaurant_socket = await RestaurantController.getSocketId({ idRest:id_restaurant })
         const couriers = await CourierController.getActiveCouriers()
+        const newOrder = {id:randomUUID(), order:order}
+        console.log(newOrder)
 
         if(couriers.length > 0){
-            io.to(restaurant_socket).emit('add order', {
-                    
-                order:order
+            const user = await UserController.getUser({ id:id_user })
+            const restaurant = await RestaurantController.getRestaurant({ id: id_restaurant})
+            const restaurant_socket = await RestaurantController.getSocketId({ idRest:id_restaurant })
+
+            io.to(restaurant_socket).emit('new order', newOrder)
+
+            socket.once('restaurant response', (response) => {
+                console.log(response)
             })
+        }
+        else{
+            io.to(socket.id).emit('error order', "There are not couriers aviable at this time")
         }
         if(order){
             // Primero mirar si hay curiers libres
