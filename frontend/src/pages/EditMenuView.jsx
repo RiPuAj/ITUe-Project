@@ -6,6 +6,8 @@ import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Container from "react-bootstrap/esm/Container";
 import Navbar from 'react-bootstrap/Navbar'
+import FormControl from 'react-bootstrap/Form'
+import InputGroup from 'react-bootstrap/InputGroup'
 import { TableEditMenu } from "../Components/TableEditMenu";
 
 
@@ -129,7 +131,7 @@ export const EditMenuView = () => {
             id: id,
             newMenu: menu
         })
-        
+
         setShowAddModal(false);
     };
 
@@ -146,11 +148,20 @@ export const EditMenuView = () => {
                     </Navbar.Collapse>
                 </Container>
             </Navbar>
-            
+
             <div className="d-flex justify-content-end m-2">
                 <Button onClick={handleAddModal}>ADD</Button>
+                <InputGroup className="mb-3">
+                    <FormControl
+                        placeholder="Search..."
+                        aria-label="Search"
+                        //value={searchTerm}
+                        //onChange={handleSearch}
+                    />
+                    <Button variant="outline-secondary" /*onClick={handleClearSearch}*/>Clear</Button>
+                </InputGroup>
             </div>
-            
+
             <TableEditMenu menu={menu} handleDeleteModal={handleDeleteModal} handleEditModal={handleEditModal} />
 
             {/* Ventana modal para editar */}
@@ -166,7 +177,7 @@ export const EditMenuView = () => {
                         </Form.Group>
                         <Form.Group controlId="formPrice">
                             <Form.Label>Price</Form.Label>
-                            <Form.Control type="number" placeholder="Enter price" value={editPrice} onChange={(e) => setEditPrice(parseFloat(e.target.value))} min={0.01}/>
+                            <Form.Control type="number" placeholder="Enter price" value={editPrice} onChange={(e) => setEditPrice(parseFloat(e.target.value))} min={0.01} />
                         </Form.Group>
                     </Form>
                 </Modal.Body>
@@ -209,7 +220,7 @@ export const EditMenuView = () => {
                         </Form.Group>
                         <Form.Group controlId="formNewPrice">
                             <Form.Label>Price</Form.Label>
-                            <Form.Control type="number" placeholder="Enter price" onChange={(e) => setNewPrice(e.target.value)} min={0.01}/>
+                            <Form.Control type="number" placeholder="Enter price" onChange={(e) => setNewPrice(e.target.value)} min={0.01} />
                         </Form.Group>
                     </Form>
                 </Modal.Body>

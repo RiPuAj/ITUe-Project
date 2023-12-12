@@ -3,9 +3,22 @@ import { randomUUID } from 'node:crypto'
 
 const restaurantsInformation = readJSON('./models/local-file-sys/local-storage/MOCK_DATA.json')
 const users = readJSON('./models/local-file-sys/local-storage/users.json')
+const couriers = readJSON('./models/local-file-sys/local-storage/couriers.json')
+
 var connectedCouriers = []
 var connectedRestaurants = []
 var connectedUsers = []
+var orders = []
+var nonActiveCouriers = []
+
+const OrderStatus = {
+    PendingAcceptance: 'Pending Acceptance',
+    AcceptedByRestaurant: 'Accepted by Restaurant',
+    Preparing: 'Preparing',
+    AcceptedByDriver: 'Accepted by Driver',
+    OnTheWay: 'On the Way',
+    Received: 'Received'
+  }
 
 const findRestaurant = ({ id }) => {
     const restaurant = restaurantsInformation.find(rest => rest.id == id)
@@ -96,8 +109,8 @@ export class AppModel {
         return false
     }
 
-    static removeConnectedRestaurant({ idRest }){
-        const restIndex = connectedRestaurants.findIndex(info => info.id_restaurant == idRest)
+    static removeConnectedRestaurant({ idSocket }){
+        const restIndex = connectedRestaurants.findIndex(info => info.id_socket == idSocket)
 
         if (restIndex < 0) return false
 
@@ -106,10 +119,71 @@ export class AppModel {
         return true
     }
 
-    static getSocketId({ idRest }){
-        const socketId = connectedRestaurants.filter(infoSocket => {
-            if(infoSocket.id_restaurant == idRest) return infoSocket.id_socket
+    static addConnectedUser({idUser, idSocket}){
+        const user = {
+            id_user:idUser,
+            id_socket: idSocket
+        }
+
+        const existConnected = connectedUsers.map((user) => {
+            return user.id_user == idUser
         })
+
+        if(!existConnected.includes(true)){
+            connectedUsers.push(user)
+            return true
+        }
+
+        return false
+    }
+
+    static removeConnectedUser({ idSocket }){
+
+        const userIndex = connectedUsers.findIndex(user => user.id_socket == idSocket)
+
+        if (userIndex < 0) return false
+
+        connectedUsers.splice(userIndex, 1)
+
+        return true
+    }
+
+    static addConnectedCourier({ idCourier, idSocket }){
+        const user = {
+            id_courier:idCourier,
+            id_socket: idSocket
+        }
+
+        const existConnected = connectedCouriers.map((courier) => {
+            return courier.id_courier == idCourier
+        })
+
+        if(!existConnected.includes(true)){
+            connectedCouriers.push(user)
+            return true
+        }
+
+        return false
+    }
+
+    static removeConnectedCourier({ idSocket }){
+
+        const courierIndex = connectedCouriers.findIndex(courier => courier.id_socket == idSocket)
+
+        if (courierIndex < 0) return false
+
+        connectedCouriers.splice(courierIndex, 1)
+
+        return true
+    }
+
+    static getSocketId({ idRest }){
+
+        const socketIdIndex = connectedRestaurants.findIndex(con => con.id_restaurant == idRest)
+        
+        if(socketIdIndex > -1){
+            return connectedRestaurants[socketIdIndex].id_socket
+        }
 
         return false
     }
@@ -119,11 +193,28 @@ export class AppModel {
     }
 
     static getActiveRestaurants(){
-        console.log(connectedRestaurants)
         return connectedRestaurants
     }
 
     static getActiveUsers(){
         return connectedUsers
+    }
+
+    static addOrder({query}){
+        const order = {id: randomUUID(), restaurant_id: query.restaurant, user_id: query.user, order: query.order, status: OrderStatus.PendingAcceptance}
+        orders.push(order)
+    }
+
+    static getCourier({ idCourier }){
+        const courier = couriers.find(c => c.id == idCourier)
+        console.log(courier)
+        return courier
+    }
+
+    static setNonActiveCourier({ id }){
+        const indexCourier = connectedCouriers.findIndex(courier => courier.id = id)
+
+        nonActiveCouriers.push(connectedCouriers[indexCourier])
+        connectedCouriers.slice(indexCourier, 1)
     }
 }

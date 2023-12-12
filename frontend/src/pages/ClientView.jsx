@@ -1,3 +1,4 @@
+//Done by Pablo Villegas
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ClientContext } from "../hooks/contexts.jsx";
@@ -29,6 +30,13 @@ export const ClientView = () => {
                 setRestaurants(rests)
             })
 
+            socket.emit('connected', {
+                query:{
+                  id: id,
+                  typeClient: 'user'
+                }
+              })
+
             socket.emit('get all restaurants')
             socket.emit('get client', {
                 query: {
@@ -50,8 +58,7 @@ export const ClientView = () => {
             <div className="col">
                 {currentRestaurants.map((rest, index) => (
                     <div key={index} className="col-lg-4 mb-3">
-                        <Link to={`/user/${id}/restaurant/${rest.id}`} className="custom-link">
-                            <Card>
+                            <Card as={Link} to={`/user/${id}/restaurant/${rest.id}`}>
                                 <Card.Body>
                                     <Card.Title>{rest.name}</Card.Title>
                                 </Card.Body>
@@ -59,7 +66,6 @@ export const ClientView = () => {
                                     <ListGroup.Item>Rating: {rest.rating}</ListGroup.Item>
                                 </ListGroup>
                             </Card>
-                        </Link>
                     </div>
                 ))}
             </div>

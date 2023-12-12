@@ -10,6 +10,7 @@ export class RestaurantController{
         return restaurants
     }
 
+    // Hay que cambiar esta funcion
     static async createRestaurant(req, res) {
         const result = validateRestaurant(req.body)
 
@@ -21,19 +22,8 @@ export class RestaurantController{
         res.status(201).json(restaurant)
     }
 
-    /*static async getRestaurant(req, res) {
-        
-        // Hacer la validacion de la id
-        const { id } = req.params
-        const restaurant = await AppModel.getRestaurant({id})
-
-        if(restaurant==undefined) res.status(400).json({error: 'Restaurant Not Found'})
-
-        return res.status(201).json(restaurant)
-    }*/
-
     static async getRestaurant({ id }){
-        const result = validatePartialRestaurant(id)
+
         const restaurant = await AppModel.getRestaurant({ id })
 
         return restaurant
@@ -46,6 +36,7 @@ export class RestaurantController{
     }
 
     static async getMenu({ id, newMenu }){
+
         const menu = await AppModel.getMenu({ id, newMenu })
 
         if (menu == undefined) return false
@@ -60,20 +51,16 @@ export class RestaurantController{
         return true
     }
 
-    static async addConnectedRestaurant({idRest, idSocket}){
+    static async addConnectedRestaurant({idRest, idSocket}){        
+
         const res = await AppModel.addConnectedRestaurant({idRest, idSocket})
 
         return res
     }
 
-    static async removeConnectedRestaurant({ idRest }){
-        const resRemove = await AppModel.removeConnectedRestaurant({ idRest })
+    static async removeConnectedRestaurant({ idSocket }){
+        const resRemove = await AppModel.removeConnectedRestaurant({ idSocket })
         return resRemove
-    }
-
-    static async setOpenState({ idRest }){
-  
-        return AppModel.setOpen({ idRest })
     }
 
     static async getSocketId({ idRest }){

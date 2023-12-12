@@ -1,14 +1,15 @@
+//Done by Pablo Villegas
 import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { ClientContext } from "../hooks/contexts"
 import Button from 'react-bootstrap/Button';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
-import Modal from 'react-bootstrap/Modal';
-import { FaShoppingBasket } from "react-icons/fa";
-import { FaRegTrashAlt } from "react-icons/fa";
 import { MdAddShoppingCart } from "react-icons/md";
 import Table from 'react-bootstrap/Table';
+import Col from "react-bootstrap/esm/Col";
+import Row from "react-bootstrap/esm/Row";
+import ListGroup from 'react-bootstrap/ListGroup';
 
 export const MenuView = () => {
 
@@ -18,11 +19,7 @@ export const MenuView = () => {
     const [basket, setBasket] = useState([])
     const [itemToBasket, setItemToBasket] = useState(null)
     const [total, setTotal] = useState(0)
-
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const [user, setUser] = useState()
 
     useEffect(() => {
         if (socket) {
@@ -33,6 +30,16 @@ export const MenuView = () => {
             socket.emit('get restaurant', {
                 query: {
                     id: id_restaurant
+                }
+            })
+
+            socket.on('get client', (user) => {
+                setUser(user)
+            })
+
+            socket.emit('get client', {
+                query: {
+                    id: id
                 }
             })
         }
@@ -72,6 +79,18 @@ export const MenuView = () => {
         setBasket(updatedBasket);
     };
 
+    const makeOrder = () => {
+        socket.emit('add order', {
+            query: {
+                id_restaurant: restaurant.id,
+                id_user: user.id,
+                order: basket
+            }
+        })
+        setBasket([])
+        setTotal(0)
+    }
+
     return (
         <div>
 
@@ -82,39 +101,79 @@ export const MenuView = () => {
                         <>
                             <Navbar bg="dark" variant="dark">
                                 <Container>
-                                    <Navbar.Brand>{name}</Navbar.Brand>
+                                    <Navbar.Brand>{restaurant.name}</Navbar.Brand>
                                     <Navbar.Toggle />
-                                    <Navbar.Collapse className="justify-content-end">
-                                        <Button variant="light" onClick={handleShow}><FaShoppingBasket /></Button>
-                                    </Navbar.Collapse>
                                 </Container>
                             </Navbar>
 
-                            <Modal
-                                show={show}
-                                onHide={handleClose}
-                                backdrop="static"
-                                keyboard={false}
-                            >
-                                <Modal.Header closeButton>
-                                    <Modal.Title>Basket</Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>
+                        </>
+                        <Row style={{ height: '100vh' }}>
+
+                            <Col xs={9} style={{height:'100%', borderRight: 'solid 2px'}}>
+                                <Table striped bordered hover variant="clear">
+                                    {<><thead>
+                                        <tr>
+                                            <th>Dish</th>
+                                            <th>Price</th>
+                                            <th>Quantity</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                        <tbody>
+                                            {
+                                                restaurant.menu.map((dish, index) => {
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td>{dish.food}</td>
+                                                            <td>{dish.price}</td>
+                                                            <td>
+                                                                <input type="number" id={`quantity_${index}`} placeholder="0" onChange={(e) => {
+                                                                    if (e.target.value > 0) {
+                                                                        setItemToBasket(
+                                                                            { ...dish, quantity: e.target.value, id: index }
+                                                                        )
+                                                                    }
+                                                                }} />
+
+                                                            </td>
+                                                            <td>
+                                                                <Button variant="success" onClick={() => {
+                                                                    addToBasket(itemToBasket);
+                                                                    setItemToBasket(null)
+
+                                                                }}>
+                                                                    <MdAddShoppingCart />
+                                                                </Button>{' '}
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+
+                                        </tbody></>}
+                                </Table>
+                            </Col>
+                            <Col xs={3}>
+                                <div className="sidebar-header">
+                                    <h3>Basket</h3>
+                                </div>
+
+                                <div className="sidebar-body">
                                     {basket && basket.length > 0 ? (
                                         <div>
-                                            <ul className="list-group">
+                                            <ListGroup>
                                                 {basket.map((item, index) => (
-                                                    <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                                                    <ListGroup.Item key={index}>
                                                         <div className="col">{item.food}</div>
                                                         <div className="col">{item.price} x{item.quantity}</div>
                                                         <div className="col-auto">
-                                                            <Button variant='danger' onClick={() => {
-                                                                updateBasket(item)
-                                                            }}><FaRegTrashAlt /></Button>
+                                                            <Button variant="danger" onClick={() => updateBasket(item)}>
+                                                                Remove
+                                                            </Button>
                                                         </div>
-                                                    </li>
+                                                    </ListGroup.Item>
                                                 ))}
-                                            </ul>
+                                            </ListGroup>
                                             <div className="mt-3">
                                                 <h5>Total: {total.toFixed(2)}€</h5>
                                             </div>
@@ -122,57 +181,15 @@ export const MenuView = () => {
                                     ) : (
                                         <p>No items in the basket</p>
                                     )}
-                                </Modal.Body>
-                                <Modal.Footer>
-                                    <Button variant="secondary" onClick={handleClose}>
-                                        Close
-                                    </Button>
-                                    <Button variant="primary">Make Order</Button>
-                                </Modal.Footer>
-                            </Modal>
-                        </>
-                        <><Table striped bordered hover variant="clear">
-                            {<><thead>
-                                <tr>
-                                    <th>Dish</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    restaurant.menu.map((dish, index) => {
-                                        return (
-                                            <tr key={index}>
-                                                <td>{dish.food}</td>
-                                                <td>{dish.price}</td>
-                                                <td>
-                                                    <input type="number" id={`quantity_${index}`} placeholder="0" onChange={(e) => {
-                                                        if (e.target.value > 0) {
-                                                            setItemToBasket(
-                                                                { ...dish, quantity: e.target.value, id: index }
-                                                            )
-                                                        }
-                                                    }} />
+                                </div>
 
-                                                </td>
-                                                <td>
-                                                    <Button variant="success" onClick={() => {
-                                                        addToBasket(itemToBasket);
-                                                        setItemToBasket(null)
-
-                                                    }}>
-                                                        <MdAddShoppingCart />
-                                                    </Button>{' '}
-                                                </td>
-                                            </tr>
-                                        )
-                                    })
-                                }
-
-                            </tbody></>}
-                        </Table></>
+                                <Row>
+                                    <Col xs={12} className="border-top" style={{ position: 'fixed', bottom: 5, width: '25%' }}>
+                                        <Button variant="success" onClick={() => makeOrder()}>Make order</Button>
+                                    </Col>
+                                </Row>
+                            </Col>
+                        </Row>
                     </div>
                 )
             }

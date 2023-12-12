@@ -2,15 +2,14 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ClientContext } from "../hooks/contexts";
 import { NavBarRestaurant } from "../Components/NavBarRestaurant.jsx";
-import Modal from 'react-bootstrap/Modal';
-import Button from "react-bootstrap/esm/Button.js";
-
+import Container from "react-bootstrap/esm/Container.js";
+import ListGroup from "react-bootstrap/ListGroup"
 
 const RestaurantView = () => {
 
   //const [isConnected, setIsConnected] = useState(socket.connected)
   const [restaurant, setRestaurant] = useState()
-  const [orders, setOrders] = useState([])
+  const [orders, setOrders] = useState([{ id: 1, description: "Orden 1" }, { id: 2, description: "Order 2" }])
 
   // Take params from URL
   const { id } = useParams()
@@ -28,7 +27,7 @@ const RestaurantView = () => {
       })
 
       socket.emit('connected', {
-        query:{
+        query: {
           id: id,
           typeClient: 'restaurant'
         }
@@ -38,8 +37,6 @@ const RestaurantView = () => {
         query: { id: id }
       })
     }
-
-    return() => socket.disconnect()
   }, [socket])
 
 
@@ -51,28 +48,26 @@ const RestaurantView = () => {
         )
       }
       <div>
-        <h1>ORDERS</h1>
         {orders.length < 1 ?
 
           <div className="d-flex justify-content-center">
             <h1>No orders already</h1>
           </div>
-
-          : <h1>SI order</h1>}
-
-        {/*<Modal show={show} onHide={onHide}>
-          <Modal.Header closeButton>
-            <Modal.Title>Nueva Orden</Modal.Title>
-          </Modal.Header>
-          <Modal.Footer>
-            <Button variant="danger" onClick={handleReject}>
-              Reject
-            </Button>
-            <Button variant="" onClick={handleAccept}>
-              Accept
-            </Button>
-          </Modal.Footer>
-        </Modal>*/}
+          :
+          <Container>
+            <h2 className="me-auto">Orders</h2>
+            <Container className="border rounded p-3">
+              <ListGroup variant="flush">
+                {orders.map((order) => (
+                  <ListGroup.Item key={order.id}>
+                    <h5>Order ID: {order.id}</h5>
+                    <p>{order.description}</p>
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Container>
+          </Container>
+          }
       </div>
     </div>
   );

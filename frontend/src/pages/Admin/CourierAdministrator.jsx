@@ -8,9 +8,17 @@ import Row from 'react-bootstrap/Row'
 import Card from 'react-bootstrap/Card'
 import { Link } from 'react-router-dom';
 
+
+
+
+
+
 export const CourierAdministratorView = () =>{
   return(
     <div>
+
+
+
       <Navbar bg="dark" variant="dark" expand="lg">
         <Container>
             <Navbar.Brand as={Link} to="/admin">GlovoClone Admin</Navbar.Brand>
