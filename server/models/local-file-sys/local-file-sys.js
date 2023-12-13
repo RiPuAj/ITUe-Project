@@ -1,3 +1,5 @@
+// Done by Javier Pulido, Pablo Villegas, Nicolás Marcelo and Manuel Burgos
+
 import { readJSON } from '../../utils.js'
 import { randomUUID } from 'node:crypto'
 
