@@ -43,4 +43,10 @@ export class UserController{
         return response
     }
 
+    static async getSocketId({ id_user }){
+        const res = await AppModel.getSocketIdUser({ id_user })
+
+        return res
+    }
+
 }

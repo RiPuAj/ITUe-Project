@@ -1,35 +1,34 @@
 import { useContext, useEffect, useState } from "react"
-import { ClientContext } from "../hooks/contexts"
+import { ClientContext } from "../../hooks/contexts"
 import { useParams } from "react-router-dom"
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Container from "react-bootstrap/esm/Container";
 import Navbar from 'react-bootstrap/Navbar'
-import FormControl from 'react-bootstrap/Form'
-import InputGroup from 'react-bootstrap/InputGroup'
-import { TableEditMenu } from "../Components/TableEditMenu";
-
-
-
-
+import { TableEditMenu } from "../../Components/TableEditMenu";
 
 export const EditMenuView = () => {
+
     // Estado para el menú de comida
+    // States for dish menu
     const [restaurant, setRestaurant] = useState(null)
     const [menu, setMenu] = useState([])
 
     // Estado para la ventana modal de edición
+    // States for edition window modal
     const [showEditModal, setShowEditModal] = useState(false);
     const [editFood, setEditFood] = useState('');
     const [editPrice, setEditPrice] = useState();
     const [editItemId, setEditItemId] = useState(null);
 
     // Estado para la ventana modal de eliminación
+    // States for elimination window modal
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [deleteItemId, setDeleteItemId] = useState(null);
 
     // Estado para la ventana modal de adición
+    // States for edition window modal
     const [showAddModal, setShowAddModal] = useState(false);
     const [newFood, setNewFood] = useState('');
     const [newPrice, setNewPrice] = useState('');
@@ -37,6 +36,7 @@ export const EditMenuView = () => {
     const { id } = useParams()
     const socket = useContext(ClientContext)
 
+    // Hook when render the component at the first time
     useEffect(() => {
         if (socket) {
             socket.on('get restaurant', (rest) => {
@@ -58,15 +58,16 @@ export const EditMenuView = () => {
     };
 
     // Función para cerrar la ventana modal de edición
+    // Function to close edition window modal
     const handleCloseEditModal = () => {
         setShowEditModal(false);
     };
 
     // Función para guardar los cambios de edición
+    // Function to save changes when edit
     const handleSaveChanges = () => {
-        // Lógica para guardar los cambios
-        // ...
 
+        if(!(editFood)|| !(editPrice)) return
         menu[editItemId] = {
             food: editFood,
             price: editPrice
@@ -83,20 +84,22 @@ export const EditMenuView = () => {
     };
 
     // Función para abrir la ventana modal de eliminación
+    // Function to open the delete window modal
     const handleDeleteModal = (id) => {
         setDeleteItemId(id);
         setShowDeleteModal(true);
     };
 
     // Función para cerrar la ventana modal de eliminación
+    // Function to close the delete window modal
     const handleCloseDeleteModal = () => {
         setShowDeleteModal(false);
     };
 
     // Función para confirmar la eliminación
+    // Function to confirm the elimination
     const handleDeleteItem = () => {
-        // Lógica para eliminar el elemento
-        // ...
+
         menu.splice(deleteItemId, 1)
 
         socket.emit('edit menu', {
@@ -108,19 +111,25 @@ export const EditMenuView = () => {
     };
 
     // Función para abrir la ventana modal de adición
+    // Function to open edit window modal
     const handleAddModal = () => {
         setShowAddModal(true);
     };
 
     // Función para cerrar la ventana modal de adición
+    // Function to close add window modal
     const handleCloseAddModal = () => {
         setShowAddModal(false);
     };
 
     // Función para agregar un nuevo plato de comida
+    // Function to add new dish
     const handleAddItem = () => {
         // Lógica para agregar un nuevo plato
-        // ...
+        // Logic to add new dish
+
+        if (!(newFood) || !(newPrice)) return
+
         const newDish = {
             food: newFood,
             price: newPrice
@@ -137,6 +146,10 @@ export const EditMenuView = () => {
 
     return (
         <div>
+            {/*
+                Barra de navegacioón
+                Navigation bar
+            */}
             <Navbar bg="dark" variant="dark">
                 <Container>
                     <Navbar.Brand >Edit Menu</Navbar.Brand>
@@ -149,22 +162,20 @@ export const EditMenuView = () => {
                 </Container>
             </Navbar>
 
+            {/* 
+                Botón para añadir comida
+                Button to add dish
+            */}
             <div className="d-flex justify-content-end m-2">
                 <Button onClick={handleAddModal}>ADD</Button>
-                <InputGroup className="mb-3">
-                    <FormControl
-                        placeholder="Search..."
-                        aria-label="Search"
-                        //value={searchTerm}
-                        //onChange={handleSearch}
-                    />
-                    <Button variant="outline-secondary" /*onClick={handleClearSearch}*/>Clear</Button>
-                </InputGroup>
             </div>
 
             <TableEditMenu menu={menu} handleDeleteModal={handleDeleteModal} handleEditModal={handleEditModal} />
 
-            {/* Ventana modal para editar */}
+            {/* 
+                Ventana modal para editar 
+                Window modal to edit
+            */}
             <Modal show={showEditModal} onHide={handleCloseEditModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Edit Food</Modal.Title>
@@ -191,7 +202,10 @@ export const EditMenuView = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* Ventana modal para eliminar */}
+            {/* 
+                Ventana modal para eliminar 
+                Window modal to confirm the elimination of dish
+            */}
             <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirm Deletion</Modal.Title>
@@ -207,7 +221,10 @@ export const EditMenuView = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* Ventana modal para agregar */}
+            {/* 
+                Ventana modal para agregar 
+                Window modal to add new dish
+            */}
             <Modal show={showAddModal} onHide={handleCloseAddModal}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add Food</Modal.Title>

@@ -11,57 +11,40 @@ var connectedUsers = []
 var orders = []
 var nonActiveCouriers = []
 
-const OrderStatus = {
-    PendingAcceptance: 'Pending Acceptance',
-    AcceptedByRestaurant: 'Accepted by Restaurant',
-    Preparing: 'Preparing',
-    AcceptedByDriver: 'Accepted by Driver',
-    OnTheWay: 'On the Way',
-    Received: 'Received'
-  }
-
 const findRestaurant = ({ id }) => {
     const restaurant = restaurantsInformation.find(rest => rest.id == id)
     return restaurant
-    
+
 }
 
 
 
 export class AppModel {
 
-    static getAllRestaurants(){
-        const basicInfo = restaurantsInformation.map(rest => {
-            return(
-                {
-                    id: rest.id,
-                    name: rest.name,
-                    rating: rest.rating
-                }
-            )
-        })
+    static getAllRestaurants() {
 
-        return basicInfo
+        return restaurantsInformation
     }
 
-    static getRestaurant({ id }){
+    
+    static getRestaurant({ id }) {
         const restaurant = findRestaurant({ id })
         return restaurant
     }
 
-    static getMenu({ id }){
+    static getMenu({ id }) {
         const restaurant = findRestaurant({ id })
-        
-        if(restaurant == undefined) return restaurant
+
+        if (restaurant == undefined) return restaurant
 
         return restaurant.menu
     }
 
-    static updateMenu({ id, newMenu }){
+    static updateMenu({ id, newMenu }) {
 
         const restaurantIndex = restaurantsInformation.findIndex(res => res.id == id)
 
-        if( restaurantIndex < 0) return false
+        if (restaurantIndex < 0) return false
 
 
         restaurantsInformation[restaurantIndex].menu = newMenu
@@ -69,29 +52,34 @@ export class AppModel {
         return true
     }
 
-    static createRestaurant(object){
- 
+    static createRestaurant(object) {
+
         const newRestaurant = {
             id: randomUUID(),
             ...object.data
         }
-    
+
         restaurantsInformation.push(newRestaurant)
 
         return newRestaurant
     }
 
-    static getAllUsers(){
+    static getAllUsers() {
         return users
     }
 
-    static getUser({ id }){
+    static getAllCouriers() {
+        return couriers
+    }
+
+    //Done by Pablo Villegas
+    static getUser({ id }) {
         const user = users.find(user => user.id == id)
 
         return user
     }
 
-    static addConnectedRestaurant({idRest, idSocket}){
+    static addConnectedRestaurant({ idRest, idSocket }) {
         const restaurant = {
             id_restaurant: idRest,
             id_socket: idSocket
@@ -101,7 +89,7 @@ export class AppModel {
             return rest.id_restaurant == idRest
         })
 
-        if(!existConnected.includes(true)){
+        if (!existConnected.includes(true)) {
             connectedRestaurants.push(restaurant)
             return true
         }
@@ -109,8 +97,13 @@ export class AppModel {
         return false
     }
 
-    static removeConnectedRestaurant({ idSocket }){
+    static removeConnectedRestaurant({ idSocket }) {
         const restIndex = connectedRestaurants.findIndex(info => info.id_socket == idSocket)
+        orders.filter(order => {
+            console.log(order.restaurant.id, connectedRestaurants[restIndex].id_restaurant)
+            return order.restaurant.id !== connectedRestaurants[restIndex].id_restaurant
+        })
+        console.log(orders)
 
         if (restIndex < 0) return false
 
@@ -119,9 +112,9 @@ export class AppModel {
         return true
     }
 
-    static addConnectedUser({idUser, idSocket}){
+    static addConnectedUser({ idUser, idSocket }) {
         const user = {
-            id_user:idUser,
+            id_user: idUser,
             id_socket: idSocket
         }
 
@@ -129,7 +122,7 @@ export class AppModel {
             return user.id_user == idUser
         })
 
-        if(!existConnected.includes(true)){
+        if (!existConnected.includes(true)) {
             connectedUsers.push(user)
             return true
         }
@@ -137,7 +130,7 @@ export class AppModel {
         return false
     }
 
-    static removeConnectedUser({ idSocket }){
+    static removeConnectedUser({ idSocket }) {
 
         const userIndex = connectedUsers.findIndex(user => user.id_socket == idSocket)
 
@@ -148,9 +141,9 @@ export class AppModel {
         return true
     }
 
-    static addConnectedCourier({ idCourier, idSocket }){
+    static addConnectedCourier({ idCourier, idSocket }) {
         const user = {
-            id_courier:idCourier,
+            id_courier: idCourier,
             id_socket: idSocket
         }
 
@@ -158,7 +151,7 @@ export class AppModel {
             return courier.id_courier == idCourier
         })
 
-        if(!existConnected.includes(true)){
+        if (!existConnected.includes(true)) {
             connectedCouriers.push(user)
             return true
         }
@@ -166,7 +159,7 @@ export class AppModel {
         return false
     }
 
-    static removeConnectedCourier({ idSocket }){
+    static removeConnectedCourier({ idSocket }) {
 
         const courierIndex = connectedCouriers.findIndex(courier => courier.id_socket == idSocket)
 
@@ -177,44 +170,185 @@ export class AppModel {
         return true
     }
 
-    static getSocketId({ idRest }){
+    static getSocketId({ idRest }) {
 
         const socketIdIndex = connectedRestaurants.findIndex(con => con.id_restaurant == idRest)
-        
-        if(socketIdIndex > -1){
+
+        if (socketIdIndex > -1) {
             return connectedRestaurants[socketIdIndex].id_socket
         }
 
         return false
     }
 
-    static getActiveCouriers(){
+    static getActiveCouriers() {
         return connectedCouriers
     }
 
-    static getActiveRestaurants(){
+    static getActiveRestaurants() {
         return connectedRestaurants
     }
 
-    static getActiveUsers(){
+    static getActiveUsers() {
         return connectedUsers
     }
 
-    static addOrder({query}){
-        const order = {id: randomUUID(), restaurant_id: query.restaurant, user_id: query.user, order: query.order, status: OrderStatus.PendingAcceptance}
-        orders.push(order)
-    }
-
-    static getCourier({ idCourier }){
+    static getCourier({ idCourier }) {
         const courier = couriers.find(c => c.id == idCourier)
-        console.log(courier)
         return courier
     }
 
-    static setNonActiveCourier({ id }){
+    static getSocketIdCourier({ id_courier }) {
+        const courierIndex = connectedCouriers.findIndex(courier => courier.id_courier == id_courier)
+
+        if (courierIndex < 0) return false
+
+        return connectedCouriers[courierIndex].id_socket
+    }
+
+    static setNonActiveCourier({ id }) {
         const indexCourier = connectedCouriers.findIndex(courier => courier.id = id)
 
         nonActiveCouriers.push(connectedCouriers[indexCourier])
         connectedCouriers.slice(indexCourier, 1)
+    }
+
+    static createOrder({ id_user, id_restaurant, order }) {
+        const user = users.find(user => user.id == id_user)
+        const restaurant = restaurantsInformation.find(rest => rest.id == id_restaurant)
+
+
+        if (user && restaurant) {
+            const newOrder = {
+                id_order: randomUUID(),
+                user: {
+                    id: user.id,
+                    address: user.address,
+                    phone: user.phone
+                },
+                restaurant: {
+                    id: restaurant.id,
+                    address: restaurant.address,
+                },
+                order: order
+            }
+
+            orders.push(newOrder)
+            return newOrder
+        } else {
+            return false
+        }
+    }
+
+    static deleteOrder({ id_order }) {
+        const orderIndex = orders.findIndex(order => order.id_order == id_order)
+
+        if (orderIndex < 0) {
+            return false
+        }
+
+        const orderDeleted = orders[orderIndex]
+        orders.splice(orderIndex, 1)
+
+        return orderDeleted
+    }
+
+    static setCourier({ id_order }) {
+        const orderIndex = orders.findIndex(order => order.id_order == id_order)
+
+        if (orderIndex < 0) return false
+
+        const courier = couriers.find(courier => courier.id == connectedCouriers[0].id_courier)
+
+        if (!courier) return false
+
+        const updatedOrder = {
+            ...orders[orderIndex],
+            courier: {
+                id: courier.id,
+                phone: courier.phone
+            }
+        }
+
+        orders[orderIndex] = updatedOrder
+
+        return orders[orderIndex]
+    }
+
+    static getOrders({ id_restaurant }) {
+        const restaurantOrders = orders.map(order => {
+            if (order.restaurant.id == id_restaurant) {
+                return order
+            }
+        })
+
+        return restaurantOrders
+    }
+
+    static getSocketIdUser({ id_user }) {
+        const userSocketId = connectedUsers.filter(user => user.id == id_user)
+
+        if (!userSocketId) return false
+
+        return userSocketId
+    }
+
+    static deleteUser({ id_user }) {
+        const userIndex = users.findIndex(user => user.id == id_user)
+
+        if (userIndex < 0) return false
+
+        users.splice(userIndex, 1)
+        return true
+    }
+
+    static editUser({ user }) {
+
+        const userIndex = users.findIndex(userList => userList.id == user.id)
+
+        if (userIndex < 0) return false
+
+        users[userIndex] = user
+
+        return true
+    }
+
+    static editRestaurant({ restaurant }) {
+
+        const restaurantIndex = restaurantsInformation.findIndex(restaurantList => restaurantList.id == restaurant.id)
+
+        if (restaurantIndex < 0) return false
+
+        restaurantsInformation[restaurantIndex] = restaurant
+        return true
+    }
+
+    static editCourier({ courier }) {
+
+        const courierIndex = couriers.findIndex(courierList => courierList.id == courier.id)
+
+        if (courierIndex < 0) return false
+
+        couriers[courierIndex] = courier
+
+        return true
+    }
+
+    static deleteRestaurant({ id_restaurant }) {
+        const restaurantIndex = restaurantsInformation.findIndex(restaurant => restaurant.id == id_restaurant)
+
+        if (restaurantIndex < 0) return false
+
+        restaurantsInformation.splice(restaurantIndex, 1)
+        return true
+    }
+
+    static deleteCourier({ id_courier }) {
+        const courierIndex = couriers.findIndex(courier => courier.id == id_courier)
+
+        if (courierIndex < 0) return false
+
+        couriers.splice(courierIndex, 1)
+        return true
     }
 }

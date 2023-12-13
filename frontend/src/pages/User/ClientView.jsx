@@ -1,10 +1,12 @@
 //Done by Pablo Villegas
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ClientContext } from "../hooks/contexts.jsx";
+import { ClientContext } from "../../hooks/contexts.jsx";
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
+import Navbar from "react-bootstrap/Navbar"
+import Container from "react-bootstrap/esm/Container.js";
 
 export const ClientView = () => {
 
@@ -31,11 +33,11 @@ export const ClientView = () => {
             })
 
             socket.emit('connected', {
-                query:{
-                  id: id,
-                  typeClient: 'user'
+                query: {
+                    id: id,
+                    typeClient: 'user'
                 }
-              })
+            })
 
             socket.emit('get all restaurants')
             socket.emit('get client', {
@@ -54,18 +56,29 @@ export const ClientView = () => {
 
     return (
         <div>
-            {user && <p>Welcome {user.name}</p>}
+            <Navbar bg="dark" variant="dark">
+                <Container>
+                    <Navbar.Brand >{user && (`Welcome ${user.first_name} ${user.last_name}!`)}</Navbar.Brand>
+                    <Navbar.Toggle />
+                    <Navbar.Collapse className="justify-content-end">
+                        <Navbar.Text>
+                            {user && `Signed in as ID: ${user.id}`}
+                        </Navbar.Text>
+                    </Navbar.Collapse>
+                </Container>
+            </Navbar>
+
             <div className="col">
                 {currentRestaurants.map((rest, index) => (
                     <div key={index} className="col-lg-4 mb-3">
-                            <Card as={Link} to={`/user/${id}/restaurant/${rest.id}`}>
-                                <Card.Body>
-                                    <Card.Title>{rest.name}</Card.Title>
-                                </Card.Body>
-                                <ListGroup className="list-group-flush">
-                                    <ListGroup.Item>Rating: {rest.rating}</ListGroup.Item>
-                                </ListGroup>
-                            </Card>
+                        <Card as={Link} to={`/user/${id}/restaurant/${rest.id}`}>
+                            <Card.Body>
+                                <Card.Title>{rest.name}</Card.Title>
+                            </Card.Body>
+                            <ListGroup className="list-group-flush">
+                                <ListGroup.Item>Rating: {rest.rating}</ListGroup.Item>
+                            </ListGroup>
+                        </Card>
                     </div>
                 ))}
             </div>

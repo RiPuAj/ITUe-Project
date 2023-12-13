@@ -40,16 +40,28 @@ export const ClientAdministratorView = () => {
       socket.emit('get all users')
 
       socket.on('get all users', (data) => {
-        console.log(data)
         setUsers(data)
         setTotalPages(Math.ceil(data.length / usersPerPage))
-        setSubset(data.slice(currentPage * usersPerPage, (currentPage * usersPerPage) + usersPerPage))
+        const newSubset = data.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage);
+        setSubset(newSubset);
       })
 
 
     }
 
   }, [socket])
+
+  useEffect(() => {
+    if (socket) {
+
+
+      setTotalPages(Math.ceil(users.length / usersPerPage))
+      const newSubset = users.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage);
+      setSubset(newSubset);
+
+
+    }
+  }, [users])
 
   const handlePrevClick = () => {
     const newPage = currentPage - 1
@@ -84,7 +96,11 @@ export const ClientAdministratorView = () => {
       setSubset(filteredUsers);
     } else {
       // Si el valor del buscador es menor a tres letras, muestra todos los usuarios
-      setSubset(users.slice(currentPage * usersPerPage, (currentPage * usersPerPage) + usersPerPage));
+      //setSubset(users.slice(currentPage * usersPerPage, (currentPage * usersPerPage) + usersPerPage));
+      setTotalPages(Math.ceil(users.length / usersPerPage));
+      setUsersPerPage(usersPerPage);
+      setCurrentPage(1); // Restablecer la página actual a 1 cuando cambias la cantidad de usuarios por página
+      setSubset(users.slice(0, usersPerPage));
     }
   };
 
@@ -104,6 +120,8 @@ export const ClientAdministratorView = () => {
     if (updatedUsers.length < currentPage * usersPerPage) {
       setCurrentPage(Math.ceil(updatedUsers.length / usersPerPage));
     }
+
+    socket.emit('delete user', { id_user: userId })
   };
 
   const handleEditUser = (userId) => {
@@ -134,6 +152,8 @@ export const ClientAdministratorView = () => {
     );
     setUsers(updatedUsers);
     setShowModal(false);
+    socket.emit('edit user', editingUser)
+    console.log(editingUser)
   }
 
   return (
@@ -191,37 +211,64 @@ export const ClientAdministratorView = () => {
                 <Modal.Body>
                   {/* Aquí colocarías los campos para editar la información del usuario */}
                   {editingUser && (
-                    <div>
+                    <div className="form-group">
                       <label>First Name:</label>
                       <input
                         type="text"
+                        className="form-control"
                         value={editingUser.first_name}
                         onChange={(e) =>
                           setEditingUser({
                             ...editingUser,
-                            first_name: e.target.value
+                            first_name: e.target.value,
                           })
                         }
                       />
                       <label>Last Name:</label>
                       <input
                         type="text"
+                        className="form-control"
                         value={editingUser.last_name}
                         onChange={(e) =>
                           setEditingUser({
                             ...editingUser,
-                            last_name: e.target.value
+                            last_name: e.target.value,
                           })
                         }
                       />
                       <label>Email:</label>
                       <input
                         type="text"
+                        className="form-control"
                         value={editingUser.email}
                         onChange={(e) =>
                           setEditingUser({
                             ...editingUser,
-                            email: e.target.value
+                            email: e.target.value,
+                          })
+                        }
+                      />
+                      <label>Phone:</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editingUser.phone}
+                        onChange={(e) =>
+                          setEditingUser({
+                            ...editingUser,
+                            phone: e.target.value,
+                          })
+                        }
+                      />
+                      <label>Address:</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={editingUser.address}
+                        onChange={(e) =>
+                          setEditingUser({
+                            ...editingUser,
+                            address: e.target.value,
                           })
                         }
                       />

@@ -1,34 +1,52 @@
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ClientContext } from "../hooks/contexts";
-import { NavBarRestaurant } from "../Components/NavBarRestaurant.jsx";
+import { ClientContext } from "../../hooks/contexts.jsx";
+import { NavBarRestaurant } from "../../Components/NavBarRestaurant.jsx";
 import Container from "react-bootstrap/esm/Container.js";
 import ListGroup from "react-bootstrap/ListGroup";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/esm/Button.js";
-import { set } from "zod";
 
 const RestaurantView = () => {
 
-  //const [isConnected, setIsConnected] = useState(socket.connected)
   const [restaurant, setRestaurant] = useState()
   const [orders, setOrders] = useState([])
   const [pendingAcceptOrder, setPendingAcceptOrder] = useState(null)
   const [showNewOrder, setShowNewOrder] = useState(false)
 
 
-  // Take params from URL
+
+  // Take params from URL and context (Socket)
   const { id } = useParams()
   const socket = useContext(ClientContext)
 
   const handleAcceptOrder = () => {
-    console.log(pendingAcceptOrder)
+
+    socket.emit('restaurant response', {
+      id_order: pendingAcceptOrder.id_order,
+      response: true
+    })
+  
     setOrders([...orders, pendingAcceptOrder])
+    setPendingAcceptOrder(null)
     setShowNewOrder(false)
   }
 
   const handleRejectOrder = () => {
     setShowNewOrder(false)
+    setPendingAcceptOrder(null)
+
+    socket.emit('restaurant response', {
+      id_order: pendingAcceptOrder.id_order,
+      response: false
+    })
+  }
+
+  const handlePreparedOrder = (index) => {
+    console.log(index)
+    const updatedOrders = [...orders]
+    updatedOrders.splice(index, 1)
+    setOrders(updatedOrders)
   }
 
   useEffect(() => {
@@ -38,9 +56,13 @@ const RestaurantView = () => {
         setRestaurant(restaurant.restaurant)
       })
 
-      socket.on('new order', (newOrder) => {
+      socket.on('add order', (newOrder) => {
         setPendingAcceptOrder(newOrder)
         setShowNewOrder(true)
+      })
+
+      socket.on('get restaurant orders', (orders) => {
+        setOrders(orders)
       })
 
       socket.emit('connected', {
@@ -53,6 +75,8 @@ const RestaurantView = () => {
       socket.emit('get restaurant', {
         query: { id: id }
       })
+
+      socket.emit('get restaurant orders')
     }
   }, [socket])
 
@@ -75,17 +99,18 @@ const RestaurantView = () => {
             <h2 className="me-auto">Orders</h2>
             <Container className="border rounded p-3">
               <ListGroup variant="flush">
-                {orders && orders.map((order) => (
+                {orders && orders.map((order, index) => (
                   <ListGroup.Item key={order.id}>
-                    <h5>Order ID: {order.id}</h5>
+                    <h5>Order ID: {order.id_order}</h5>
                     <ListGroup>
                       {order.order.map((dish, index) => (
                         <ListGroup.Item key={index}>
-                          <strong>Plato:</strong> {dish.food} - <strong>Cantidad:</strong> {dish.quantity}
+                          <strong>Dish:</strong> {dish.food} - <strong>Quantity:</strong> {dish.quantity}
                         </ListGroup.Item>
                       ))}
                     </ListGroup>
-                  </ListGroup.Item>
+                    <Button variant="success" className="mt-2" onClick={() => handlePreparedOrder(index)}> Ready </Button>
+                  </ListGroup.Item>  
                 ))}
               </ListGroup>
             </Container>
@@ -93,13 +118,26 @@ const RestaurantView = () => {
         }
 
       </div>
-      <Modal show={showNewOrder} onHide={() => setShowNewOrder(false)}>
-        <Modal.Header closeButton>
+      <Modal
+        show={showNewOrder}
+        onHide={() => setShowNewOrder(false)}
+        keyboard={false}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered>
+        <Modal.Header>
           <Modal.Title>¡New order!</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          Se ha recibido un nuevo pedido.
-          ¿Desea aceptarlo?
+          A new order has been received:
+          <ListGroup>
+            {pendingAcceptOrder && pendingAcceptOrder.order.map((dish, index) => (
+              <ListGroup.Item key={index}>
+                <strong>Dish:</strong> {dish.food} - <strong>Quantity:</strong> {dish.quantity}
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
+          Do you wish to accept it?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleRejectOrder}>

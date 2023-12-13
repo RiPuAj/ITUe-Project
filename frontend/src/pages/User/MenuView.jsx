@@ -1,7 +1,7 @@
 //Done by Pablo Villegas
 import { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { ClientContext } from "../hooks/contexts"
+import { ClientContext } from "../../hooks/contexts"
 import Button from 'react-bootstrap/Button';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
@@ -23,6 +23,7 @@ export const MenuView = () => {
     const [user, setUser] = useState()
     const [mensaje, setMensaje] = useState()
     const [showModal, setShowModal] = useState(false)
+    const [showModal2, setShowModal2] = useState(false)
 
     useEffect(() => {
         if (socket) {
@@ -49,6 +50,11 @@ export const MenuView = () => {
             socket.on('error order', (mensaje) => {
                 setMensaje(mensaje)
                 setShowModal(true)
+            })
+
+            socket.on('success order', (data) => {
+                setMensaje(data.message)
+                setShowModal2(true)
             })
         }
 
@@ -127,6 +133,18 @@ export const MenuView = () => {
                                 </Button>
                             </div>
                         </Alert>
+                        <Alert show={showModal2} variant="success">
+                            <Alert.Heading>Order placed</Alert.Heading>
+                            <p>
+                               {mensaje}
+                            </p>
+                            <hr />
+                            <div className="d-flex justify-content-end">
+                                <Button onClick={() => setShowModal2(false)} variant="success">
+                                    Close
+                                </Button>
+                            </div>
+                        </Alert>
                         <Row style={{ height: '100vh' }}>
 
                             <Col xs={9} style={{ height: '100%', borderRight: 'solid 2px' }}>
@@ -150,7 +168,7 @@ export const MenuView = () => {
                                                                 <input type="number" id={`quantity_${index}`} placeholder="0" onChange={(e) => {
                                                                     if (e.target.value > 0) {
                                                                         setItemToBasket(
-                                                                            { ...dish, quantity: e.target.value, id: index }
+                                                                            { ...dish, quantity: e.target.value}
                                                                         )
                                                                     }
                                                                 }} />

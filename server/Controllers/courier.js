@@ -26,6 +26,19 @@ export class CourierController{
     }
 
     static async setNonActiveCourier({ id }){
-        AppModel.setNonActiveCourier({ id })
+        const res = AppModel.setNonActiveCourier({ id })
+        return res
+    }
+
+    static async getSocketId({ id_courier }){
+        const socketId = await AppModel.getSocketIdCourier({ id_courier })
+
+        return socketId
+    }
+
+    static async getAllCouriers(){
+        const couriers = await AppModel.getAllCouriers()
+
+        return couriers
     }
 }
